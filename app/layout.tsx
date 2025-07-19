@@ -24,14 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <RootProvider>
-          {children}
-        </RootProvider>
-      </body>
-    </html>
-  );
+		<html lang='en'>
+			<head>
+				<meta
+					name='apple-mobile-web-app-title'
+					content='MyWebSite'
+				/>
+			</head>
+			<body
+				className={`${geistSans.className} ${geistMono.variable} antialiased `}
+			>
+				<RootProvider>{children}</RootProvider>
+			</body>
+		</html>
+	);
 }
