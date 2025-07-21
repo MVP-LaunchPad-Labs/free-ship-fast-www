@@ -1,0 +1,86 @@
+---
+title: User Authentication
+description: Add authentication to your Free Ship Fast app using Better Auth.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	This guide shows you how to add authentication to your app using Better Auth.
+</Callout>
+
+<Steps>
+<Step>
+### 1. Set up your auth route
+
+Make sure you have the auth API route at `/app/api/auth/[...all]/route.ts`.  
+If you used the template, this is already set up.
+
+</Step>
+
+<Step>
+### 2. Add a sign-in button
+
+Create a button component at `/components/auth/SignInButton.tsx`:
+
+<CodeBlock title="/components/auth/SignInButton.tsx" lang="typescript">
+```typescript
+"use client";
+
+import { signIn } from 'better-auth/react';
+import config from '@/config';
+
+const SignInButton = () => {
+return (
+
+<button
+	className='btn btn-primary'
+	onClick={() => signIn(undefined, { callbackUrl: config.auth.callbackUrl })}
+>
+	Login
+</button>
+); };
+
+export default SignInButton;
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 3. Configure your callback URL
+
+The `callbackUrl` in your `config.ts` file is used throughout the app to redirect users after successful sign-up/login.  
+Set it to a private page, like `/dashboard`:
+
+<CodeBlock title="config.ts" lang="typescript">
+```typescript
+export const auth = {
+  callbackUrl: "/dashboard",
+  // ...other auth config
+};
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 4. Use the sign-in button
+
+Import and use your sign-in button anywhere in your app:
+
+<CodeBlock title="Anywhere in your app" lang="typescript">
+```typescript
+import SignInButton from "@/components/auth/SignInButton";
+
+// ...
+
+<SignInButton />
+```
+</CodeBlock>
+</Step>
+</Steps>
+
+<Callout type='success'>
+	That’s it! You now have authentication set up with Better Auth.
+</Callout>

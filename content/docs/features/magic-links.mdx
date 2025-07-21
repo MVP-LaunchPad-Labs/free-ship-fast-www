@@ -1,0 +1,188 @@
+---
+title: Magic Link Auth
+description: Add passwordless login to your Free Ship Fast app with Better Auth.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	Magic links let users log in without a password. They enter their email, get a
+	link, and click to sign in. Choose your stack below for setup.
+</Callout>
+
+<Tabs groupId="magic-link" items={["Better Auth + Prisma", "Better Auth + MongoDB", "Better Auth + Supabase"]} persist defaultIndex={0}>
+  <Tab value="Better Auth + Prisma">
+    <Steps>
+      <Step>
+        ### 1. Install the Magic Link plugin
+
+        <CodeBlock title="lib/auth.ts" lang="typescript">
+
+```typescript
+import { betterAuth } from 'better-auth';
+import { magicLink } from 'better-auth/plugins';
+
+export const auth = betterAuth({
+	plugins: [
+		magicLink({
+			sendMagicLink: async ({ email, token, url }, request) => {
+				// send email to user (use your Resend setup)
+			},
+		}),
+	],
+	// ...other config
+});
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 2. Add the client plugin
+
+        <CodeBlock title="lib/auth-client.ts" lang="typescript">
+
+```typescript
+import { createAuthClient } from 'better-auth/client';
+import { magicLinkClient } from 'better-auth/client/plugins';
+
+export const authClient = createAuthClient({
+	plugins: [magicLinkClient()],
+});
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 3. Usage: Sign in with magic link
+
+        <CodeBlock title="Anywhere in your app" lang="typescript">
+
+```typescript
+const { data, error } = await authClient.signIn.magicLink({
+	email: 'user@email.com',
+	callbackURL: '/dashboard',
+	// ...other options
+});
+```
+
+        </CodeBlock>
+        <Callout type="tip">
+          The <code>sendMagicLink</code> function is called to send the email. See the <b>Emails</b> section for Resend setup.
+        </Callout>
+      </Step>
+      <Step>
+        ### 4. Verify magic link
+
+        Clicking the link in the email will authenticate the user and redirect to <code>callbackURL</code>.
+        You can also verify manually:
+
+        <CodeBlock title="Anywhere in your app" lang="typescript">
+
+```typescript
+const { data, error } = await authClient.magicLink.verify({
+	token: '123456',
+	callbackURL: '/dashboard',
+});
+```
+
+        </CodeBlock>
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab value="Better Auth + MongoDB">
+    <Steps>
+      <Step>
+        ### 1. Install the Magic Link plugin
+
+        (Same as Prisma, but make sure your MongoDB adapter is set up.)
+
+        <CodeBlock title="lib/auth.ts" lang="typescript">
+
+```typescript
+import { betterAuth } from 'better-auth';
+import { magicLink } from 'better-auth/plugins';
+
+export const auth = betterAuth({
+	plugins: [
+		magicLink({
+			sendMagicLink: async ({ email, token, url }, request) => {
+				// send email to user (use your Resend setup)
+			},
+		}),
+	],
+	// ...other config
+});
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 2. Add the client plugin
+
+        <CodeBlock title="lib/auth-client.ts" lang="typescript">
+
+```typescript
+import { createAuthClient } from 'better-auth/client';
+import { magicLinkClient } from 'better-auth/client/plugins';
+
+export const authClient = createAuthClient({
+	plugins: [magicLinkClient()],
+});
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 3. Usage: Sign in with magic link
+
+        <CodeBlock title="Anywhere in your app" lang="typescript">
+
+```typescript
+const { data, error } = await authClient.signIn.magicLink({
+	email: 'user@email.com',
+	callbackURL: '/dashboard',
+	// ...other options
+});
+```
+
+        </CodeBlock>
+        <Callout type="tip">
+          The MongoDB adapter will save new users in your database when they click the login link. Make sure your DB is configured first.
+        </Callout>
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab value="Better Auth + Supabase">
+    <Steps>
+      <Step>
+        ### 1. Supabase Magic Links
+
+        Supabase handles magic links for you out of the box.
+
+        - Go to <b>Authentication → Providers → Email</b> in your Supabase dashboard.
+        - Enable magic link sign-in.
+        - Set up your SMTP provider (Resend, Mailgun, etc.) in the dashboard.
+
+        <Callout type="info">
+          For production, update your [Site URL] and [Redirect URLs] in Supabase Authentication settings.
+        </Callout>
+      </Step>
+      <Step>
+        ### 2. Test magic link sign-in
+
+        - Use the Supabase client or dashboard to trigger a magic link email.
+        - User clicks the link and is authenticated automatically.
+
+        <Callout type="tip">
+          See the Supabase docs for more on customizing email templates and rate limits.
+        </Callout>
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>

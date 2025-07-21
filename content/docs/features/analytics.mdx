@@ -1,0 +1,138 @@
+---
+title: Analytics (Umami & PostHog)
+description: Add privacy-friendly analytics to your Free Ship Fast app with Umami or PostHog.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	Track user behavior and conversions with privacy-friendly analytics. Choose
+	Umami or PostHog below.
+</Callout>
+
+<Tabs groupId="analytics" items={["Umami", "PostHog"]} persist defaultIndex={0}>
+  <Tab value="Umami">
+    <Steps>
+      <Step>
+        ### 1. Create an Umami account
+
+        - Go to [Umami](https://umami.is/) and sign up (or self-host).
+        - Add your site in the Umami dashboard to get your website ID and script URL.
+      </Step>
+      <Step>
+        ### 2. Add the Umami script to your app
+
+        Add this to your <code>/app/layout.tsx</code> (or wherever your global layout is):
+
+        <CodeBlock title="app/layout.tsx" lang="typescript">
+
+```typescript
+import Script from 'next/script';
+
+export default function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
+	return (
+		<html>
+			<body>
+				{children}
+				<Script
+					src='https://your-umami-instance.com/script.js'
+					data-website-id='your-umami-website-id'
+					strategy='afterInteractive'
+				/>
+			</body>
+		</html>
+	);
+}
+```
+
+        </CodeBlock>
+        <Callout type="tip">
+          Replace <code>src</code> and <code>data-website-id</code> with your actual Umami values.
+        </Callout>
+      </Step>
+      <Step>
+        ### 3. Verify tracking
+
+        - Visit your site and check the Umami dashboard for real-time analytics.
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab value="PostHog">
+    <Steps>
+      <Step>
+        ### 1. Create a PostHog project
+
+        - Go to [PostHog](https://posthog.com/) and sign up (or self-host).
+        - Create a new project and get your Project API Key.
+      </Step>
+      <Step>
+        ### 2. Install the PostHog client
+
+        <CodeBlock title="Terminal" lang="sh">
+
+```sh
+npm install posthog-js
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 3. Initialize PostHog in your app
+
+        Add this to your <code>/app/layout.tsx</code> or a custom analytics provider:
+
+        <CodeBlock title="lib/analytics/posthog.ts" lang="typescript">
+
+```typescript
+import posthog from 'posthog-js';
+
+if (typeof window !== 'undefined' && !posthog.__initialized) {
+	posthog.init('your-posthog-project-key', {
+		api_host: 'https://app.posthog.com',
+		loaded: (ph) => {
+			ph.__initialized = true;
+		},
+	});
+}
+```
+
+        </CodeBlock>
+        <Callout type="tip">
+          You can also use a React context/provider to track page views and events.
+        </Callout>
+      </Step>
+      <Step>
+        ### 4. Track events
+
+        <CodeBlock title="Anywhere in your app" lang="typescript">
+
+```typescript
+import posthog from 'posthog-js';
+
+// Track a custom event
+posthog.capture('signup', { method: 'Google' });
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 5. Verify tracking
+
+        - Visit your site and check the PostHog dashboard for events and analytics.
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>
+
+<Callout type='success'>
+	That’s it! You’re now tracking analytics with Umami or PostHog.
+</Callout>

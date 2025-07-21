@@ -1,0 +1,73 @@
+---
+title: Protect Private Pages
+description: Restrict access to private pages in your Free Ship Fast app using a protected layout.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	This guide shows you how to restrict access to private pages using a protected
+	layout and session check.
+</Callout>
+
+<Steps>
+<Step>
+### 1. Create a Protected Layout
+
+Add a new file at `/components/auth/ProtectedLayout.tsx` and paste this code:
+
+<CodeBlock title="/components/auth/ProtectedLayout.tsx" lang="typescript">
+```typescript
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth-utils";
+
+interface ProtectedLayoutProps {
+children: React.ReactNode;
+redirectTo?: string;
+}
+
+export default async function ProtectedLayout({
+  children,
+  redirectTo = "/sign-in",
+}: ProtectedLayoutProps) {
+  const session = await getSession();
+
+if (!session?.user) {
+redirect(redirectTo);
+}
+
+return <>{children}</>;
+}
+
+````
+</CodeBlock>
+</Step>
+
+<Step>
+### 2. Use the Protected Layout in your private pages
+
+Wrap your private page (e.g., `/app/(root)/dashboard/page.tsx`) with the `ProtectedLayout`:
+
+<CodeBlock title="/app/(root)/dashboard/page.tsx" lang="typescript">
+```typescript
+import ProtectedLayout from "@/components/auth/ProtectedLayout";
+
+export default function DashboardPage() {
+  return (
+    <ProtectedLayout>
+      {/* Your dashboard content here */}
+    </ProtectedLayout>
+  );
+}
+````
+
+</CodeBlock>
+</Step>
+</Steps>
+
+<Callout type='success'>
+	Now only authenticated users can access your private pages. Unauthenticated
+	users will be redirected to <code>/sign-in</code> (or your custom route).
+</Callout>

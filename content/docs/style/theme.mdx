@@ -1,0 +1,58 @@
+---
+title: Theming & Components
+description: How theming works in Free Ship Fast, using shadcn/ui and tweakcn.com for custom themes.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+<Callout type='info'>
+	Free Ship Fast uses <b>shadcn/ui</b> for all UI components. The color system
+	and theming are managed with CSS variables in <code>app/index.css</code>.
+</Callout>
+
+## How Theming Works
+
+- All theme variables (colors, radii, etc.) are defined in <code>app/index.css</code>.
+- For <b>light mode</b>, variables are set under the <code>:root</code> selector.
+- For <b>dark mode</b>, variables are set under the <code>.dark</code> selector.
+- If you want <b>only light mode</b>: delete the <code>.dark</code> block.
+- If you want <b>only dark mode</b>: replace <code>:root</code> with <code>.dark</code> and delete the original <code>.dark</code> block.
+
+## Customizing Your Theme
+
+You can use [tweakcn.com](https://tweakcn.com/) to generate custom prebuilt themes for shadcn/ui:
+
+1. Go to [tweakcn.com](https://tweakcn.com/).
+2. Pick or generate a theme (you can use AI to generate color palettes).
+3. Copy the generated CSS variables.
+4. Paste them directly into your <code>app/index.css</code> file.
+5. Save and see the changes instantly in your app.
+
+<Callout type='tip'>
+	tweakcn.com is the fastest way to create, preview, and copy
+	shadcn/ui-compatible themes. You can also use it to generate unique color
+	palettes with AI.
+</Callout>
+
+## Example: index.css
+
+```css title="app/index.css"
+:root {
+	--background: #fff;
+	--foreground: #111;
+	/* ...other variables */
+}
+
+.dark {
+	--background: #111;
+	--foreground: #fff;
+	/* ...other variables */
+}
+```
+
+- For light-only: keep only <code>:root</code>.
+- For dark-only: replace <code>:root</code> with <code>.dark</code> and delete the <code>.dark</code> block.
+
+---
+
+For more on shadcn/ui, see the [official docs](https://ui.shadcn.com/). For custom themes, use [tweakcn.com](https://tweakcn.com/).

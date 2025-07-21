@@ -1,0 +1,81 @@
+---
+title: Email Setup (Resend)
+description: Configure transactional emails for Free Ship Fast using Resend.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	We recommend Resend for sending magic login links, waitlist confirmations, and
+	more. You’ll need an email provider for features like magic links and
+	abandoned cart emails.
+</Callout>
+
+<Steps>
+<Step>
+### 1. Create a Resend account
+
+- Go to [Resend](https://resend.com/) and sign up.
+- In <b>Domains</b>, click <b>+ Add Domain</b>. Use a subdomain like <code>resend.yourdomain.com</code>.
+- Complete all DNS verification steps. Click <b>Verify DNS Records</b> when ready (may take a few minutes).
+
+</Step>
+
+<Step>
+### 2. Get your API key
+
+- Go to <b>API Keys</b> in Resend.
+- Click <b>+ Create API Key</b>, give it a name, and leave other options as default.
+- Click <b>Add</b> and copy the API key (you’ll only see it once).
+
+Add it to your environment:
+
+<CodeBlock title=".env.local" lang="txt">
+```txt title=".env"
+RESEND_API_KEY=your-resend-api-key
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 3. Sending emails
+
+There are two ways to send emails:
+
+- **Magic login links** and system emails use SMTP (handled for you).
+- For custom emails, use the <code>sendEmail()</code> function in <code>lib/email/sendEmail.ts</code>.
+
+<CodeBlock title="lib/email/sendEmail.ts" lang="typescript">
+```typescript
+import { resend } from "@/lib/email"; // or wherever your resend client is
+
+export async function sendEmail(options) {
+  // ...your implementation
+}
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 4. Receiving emails
+
+Resend does not support receiving emails yet.
+
+You can set your support email in <code>resend.supportEmail</code> in <code>config.ts</code> and pass it to the <code>replyTo</code> option in <code>sendEmail()</code> to receive replies.
+
+<CodeBlock title="config.ts" lang="typescript">
+```typescript
+export const resend = {
+  supportEmail: "support@yourdomain.com",
+  // ...
+};
+```
+</CodeBlock>
+</Step>
+</Steps>
+
+<Callout type='success'>
+	That’s it! You’re ready to send transactional emails with Resend.
+</Callout>

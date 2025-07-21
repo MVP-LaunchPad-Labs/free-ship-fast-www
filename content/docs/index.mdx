@@ -1,7 +1,198 @@
 ---
-title: Hello World
+title: Get started
+description: How to set up Free Ship Fast with Better Auth and your choice of database.
 ---
 
-## Introductionsds
+<Steps>
 
-I love Anime.
+<Step>
+### 1. Clone the Repo
+
+```sh
+git clone https://github.com/MVP-LaunchPad-Labs/free-ship-fast-www.git [YOUR_APP_NAME]
+cd [YOUR_APP_NAME]
+```
+
+<Callout type="info">
+Choose your stack and checkout the corresponding branch in the next step.
+</Callout>
+</Step>
+
+<Step>
+### 2. Select Your Stack
+
+<Tabs groupId="stack" items={["Better Auth + Postgres", "Better Auth + MongoDB", "Supabase"]} persist defaultIndex={0}>
+  <Tab value="Better Auth + Postgres">
+    <Callout>Use branch: <b>better-auth-postgres</b></Callout>
+    ```sh
+    git checkout better-auth-postgres
+    npm install
+    git remote remove origin
+    ```
+  </Tab>
+  <Tab value="Better Auth + MongoDB">
+    <Callout>Use branch: <b>better-auth-mongodb</b></Callout>
+    ```sh
+    git checkout better-auth-mongodb
+    npm install
+    git remote remove origin
+    ```
+  </Tab>
+  <Tab value="Supabase">
+    <Callout>Use branch: <b>supabase</b></Callout>
+    ```sh
+    git checkout supabase
+    npm install
+    git remote remove origin
+    ```
+  </Tab>
+</Tabs>
+</Step>
+
+<Step>
+### 3. Configure Environment Variables
+
+Rename `.env.example` to `.env.local`:
+
+```sh
+mv .env.example .env.local
+```
+
+Set up your environment variables:
+
+<Tabs groupId="env" items={["Postgres", "MongoDB", "Supabase"]} persist defaultIndex={0}>
+  <Tab value="Postgres">
+    ```txt title=".env"
+    BETTER_AUTH_CLIENT_ID=
+    BETTER_AUTH_CLIENT_SECRET=
+    POSTGRES_URL=
+    # Add any other required env vars
+    ```
+  </Tab>
+  <Tab value="MongoDB">
+    ```txt title=".env"
+    BETTER_AUTH_CLIENT_ID=
+    BETTER_AUTH_CLIENT_SECRET=
+    MONGODB_URI=
+    # Add any other required env vars
+    ```
+  </Tab>
+  <Tab value="Supabase">
+    ```txt title=".env"
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=
+    SUPABASE_SERVICE_ROLE_KEY=
+    # Add any other required env vars
+    ```
+  </Tab>
+</Tabs>
+</Step>
+
+<Step>
+### 4. Run the App
+
+```sh
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+<Callout type="info">
+Requires Node 18.17 or higher (`node -v` to check)
+</Callout>
+</Step>
+
+<Step>
+### 5. Project Structure
+
+</Step>
+
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+
+<Callout>
+You are ready to build and launch your project!
+</Callout>
+<Tabs
+	groupId='file-structure'
+	items={['Postgres', 'MongoDB', 'Supabase']}
+	persist
+	defaultIndex={0}
+>
+	<Tab value='Postgres'>
+		<Files>
+			<Folder
+				name='app'
+				defaultOpen
+			>
+				<File name='layout.tsx' />
+				<File name='page.tsx' />
+				<File name='global.css' />
+			</Folder>
+			<Folder name='components'>
+				<File name='button.tsx' />
+				<File name='tabs.tsx' />
+				<File name='dialog.tsx' />
+			</Folder>
+			<Folder name='libs'>
+				<File name='auth.ts' />
+				<File name='db-postgres.ts' />
+			</Folder>
+			<File name='package.json' />
+			<File name='.env' />
+			<File name='config.js' />
+		</Files>
+	</Tab>
+	<Tab value='MongoDB'>
+		<Files>
+			<Folder
+				name='app'
+				defaultOpen
+			>
+				<File name='layout.tsx' />
+				<File name='page.tsx' />
+				<File name='global.css' />
+			</Folder>
+			<Folder name='components'>
+				<File name='button.tsx' />
+				<File name='tabs.tsx' />
+				<File name='dialog.tsx' />
+			</Folder>
+			<Folder name='libs'>
+				<File name='auth.ts' />
+				<File name='db-mongodb.ts' />
+			</Folder>
+			<File name='package.json' />
+			<File name='.env' />
+			<File name='config.js' />
+		</Files>
+	</Tab>
+	<Tab value='Supabase'>
+		<Files>
+			<Folder
+				name='app'
+				defaultOpen
+			>
+				<File name='layout.tsx' />
+				<File name='page.tsx' />
+				<File name='global.css' />
+			</Folder>
+			<Folder name='components'>
+				<File name='button.tsx' />
+				<File name='tabs.tsx' />
+				<File name='dialog.tsx' />
+			</Folder>
+			<Folder name='libs'>
+				<File name='auth.ts' />
+				<File name='db-supabase.ts' />
+			</Folder>
+			<File name='package.json' />
+			<File name='.env' />
+			<File name='config.js' />
+		</Files>
+	</Tab>
+</Tabs>
+
+**config.js**: It is where you configure your app. Each key is documented to know how and what env
+
+</Steps>
