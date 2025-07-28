@@ -29,7 +29,7 @@ export default function HeroSection() {
 							size='lg'
 							className='w-full sm:w-auto rounded-full shadow-inner shadow-black bg-white px-6 sm:px-8 py-3 sm:py-4 h-10 sm:h-11 text-sm sm:text-base text-black hover:bg-gray-100 focus-visible:outline-offset-2 focus-visible:outline-gray-500 transition-colors text-shadow-xs'
 						>
-							<Link href='/'>Start Building Now</Link>
+							<Link href='/docs'>Start Building Now</Link>
 						</Button>
 
 						<Button
@@ -39,7 +39,7 @@ export default function HeroSection() {
 							className='w-full sm:w-auto text-sm sm:text-base font-medium leading-6 text-foreground hover:text-muted-foreground transition-colors h-10 sm:h-11 rounded-full group'
 						>
 							<Link
-								href='https://github.com'
+								href='https://github.com/MVP-LaunchPad-Labs/free-ship-fast'
 								className='flex items-center justify-center gap-2'
 							>
 								<svg

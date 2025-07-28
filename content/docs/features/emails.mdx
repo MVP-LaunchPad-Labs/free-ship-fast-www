@@ -9,7 +9,7 @@ import { CodeBlock } from 'fumadocs-ui/components/codeblock';
 
 <Callout type='info'>
 	We recommend Resend for sending magic login links, waitlist confirmations, and
-	more. You’ll need an email provider for features like magic links and
+	more. You'll need an email provider for features like magic links and
 	abandoned cart emails.
 </Callout>
 
@@ -28,54 +28,72 @@ import { CodeBlock } from 'fumadocs-ui/components/codeblock';
 
 - Go to <b>API Keys</b> in Resend.
 - Click <b>+ Create API Key</b>, give it a name, and leave other options as default.
-- Click <b>Add</b> and copy the API key (you’ll only see it once).
+- Click <b>Add</b> and copy the API key (you'll only see it once).
 
 Add it to your environment:
 
 <CodeBlock title=".env.local" lang="txt">
 ```txt title=".env"
 RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL=no-reply@yourdomain.com
 ```
 </CodeBlock>
 </Step>
 
 <Step>
-### 3. Sending emails
+### 3. Available email functions
 
-There are two ways to send emails:
+Free Ship Fast includes several pre-built email functions in <code>lib/email/sendEmail.ts</code>:
 
-- **Magic login links** and system emails use SMTP (handled for you).
-- For custom emails, use the <code>sendEmail()</code> function in <code>lib/email/sendEmail.ts</code>.
+- **sendMagicLinkEmail()** - Sends magic link authentication emails
+- **sendPaymentSuccessEmail()** - Confirms successful payments
+- **sendPaymentProcessingEmail()** - Notifies about payment processing
+- **sendPaymentFailedEmail()** - Alerts about failed payments
+- **sendPaymentRefundedEmail()** - Confirms payment refunds
 
-<CodeBlock title="lib/email/sendEmail.ts" lang="typescript">
+<CodeBlock title="Usage example" lang="typescript">
 ```typescript
-import { resend } from "@/lib/email"; // or wherever your resend client is
+import { sendPaymentSuccessEmail } from "@/lib/email/sendEmail";
 
-export async function sendEmail(options) {
-  // ...your implementation
-}
+// Send a payment success email
+await sendPaymentSuccessEmail(
+"user@example.com",
+"John Doe",
+"29.99",
+"txn_123456"
+);
+
 ```
 </CodeBlock>
 </Step>
 
 <Step>
-### 4. Receiving emails
+### 4. Email templates
 
-Resend does not support receiving emails yet.
+All email templates are in <code>lib/email/templates/</code>:
 
-You can set your support email in <code>resend.supportEmail</code> in <code>config.ts</code> and pass it to the <code>replyTo</code> option in <code>sendEmail()</code> to receive replies.
+- **MagicLinkLogin** - Clean magic link email template
+- **PaymentSuccessEmail** - Payment confirmation template
+- **PaymentProcessingEmail** - Payment processing template
+- **PaymentFailedEmail** - Payment failure template
+- **PaymentRefundedEmail** - Refund confirmation template
 
-<CodeBlock title="config.ts" lang="typescript">
-```typescript
-export const resend = {
-  supportEmail: "support@yourdomain.com",
-  // ...
-};
-```
-</CodeBlock>
+These templates are React components with inline styles for maximum email client compatibility.
+
+<Callout type="tip">
+  All templates are already integrated with the email functions. You can customize the templates to match your brand.
+</Callout>
+</Step>
+
+<Step>
+### 5. Rate limiting
+
+Magic link emails are automatically rate-limited using Redis to prevent abuse. See the [Rate Limiting guide](/docs/security/rate-limiting) for more details.
+
 </Step>
 </Steps>
 
 <Callout type='success'>
-	That’s it! You’re ready to send transactional emails with Resend.
+  That's it! You're ready to send transactional emails with Resend. All the email functions and templates are pre-built in your template.
 </Callout>
+```

@@ -23,10 +23,9 @@ Choose your stack and checkout the corresponding branch in the next step.
 
 <Tabs groupId="stack" items={["Better Auth + Postgres", "Better Auth + MongoDB", "Supabase"]} persist defaultIndex={0}>
   <Tab value="Better Auth + Postgres">
-    <Callout>Use branch: <b>better-auth-postgres</b></Callout>
+    <Callout>Use branch: <b>main (default)</b></Callout>
     ```sh
-    git checkout better-auth-postgres
-    npm install
+    bun install
     git remote remove origin
     ```
   </Tab>
@@ -34,7 +33,7 @@ Choose your stack and checkout the corresponding branch in the next step.
     <Callout>Use branch: <b>better-auth-mongodb</b></Callout>
     ```sh
     git checkout better-auth-mongodb
-    npm install
+    bun install
     git remote remove origin
     ```
   </Tab>
@@ -42,7 +41,7 @@ Choose your stack and checkout the corresponding branch in the next step.
     <Callout>Use branch: <b>supabase</b></Callout>
     ```sh
     git checkout supabase
-    npm install
+    bun install
     git remote remove origin
     ```
   </Tab>
@@ -63,26 +62,102 @@ Set up your environment variables:
 <Tabs groupId="env" items={["Postgres", "MongoDB", "Supabase"]} persist defaultIndex={0}>
   <Tab value="Postgres">
     ```txt title=".env"
-    BETTER_AUTH_CLIENT_ID=
-    BETTER_AUTH_CLIENT_SECRET=
-    POSTGRES_URL=
-    # Add any other required env vars
+    # Better Auth
+    BETTER_AUTH_SECRET=your-random-secret-key
+    BETTER_AUTH_URL=http://localhost:3000
+    NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID=your-google-client-id
+    GOOGLE_CLIENT_SECRET=your-google-client-secret
+    
+    # App URLs
+    NEXT_PUBLIC_APP_URL=http://localhost:3000
+    SITE_URL=http://localhost:3000
+    
+    # Database
+    DATABASE_URL=postgresql://user:password@host:5432/database
+    
+    # Email (Resend)
+    RESEND_API_KEY=your-resend-api-key
+    RESEND_FROM_EMAIL=no-reply@yourdomain.com
+    
+    # Rate Limiting (Upstash Redis)
+    UPSTASH_REDIS_REST_URL=your-upstash-redis-url
+    UPSTASH_REDIS_REST_TOKEN=your-upstash-redis-token
+    
+    # Stripe
+    STRIPE_SECRET_KEY=sk_test_xxx
+    STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+    STRIPE_WEBHOOK_SECRET=whsec_xxx
+    
+    # Lemon Squeezy (optional)
+    LEMON_SQUEEZY_SECRET_KEY=sk_live_xxx
+    LEMON_SQUEEZY_STORE_ID=your-store-id
+    LEMON_SQUEEZY_WEBHOOK_SECRET=whsec_xxx
     ```
   </Tab>
   <Tab value="MongoDB">
     ```txt title=".env"
-    BETTER_AUTH_CLIENT_ID=
-    BETTER_AUTH_CLIENT_SECRET=
-    MONGODB_URI=
-    # Add any other required env vars
+    # Better Auth
+    BETTER_AUTH_SECRET=your-random-secret-key
+    BETTER_AUTH_URL=http://localhost:3000
+    NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID=your-google-client-id
+    GOOGLE_CLIENT_SECRET=your-google-client-secret
+    
+    # App URLs
+    NEXT_PUBLIC_APP_URL=http://localhost:3000
+    SITE_URL=http://localhost:3000
+    
+    # Database
+    MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/database
+    
+    # Email (Resend)
+    RESEND_API_KEY=your-resend-api-key
+    RESEND_FROM_EMAIL=no-reply@yourdomain.com
+    
+    # Rate Limiting (Upstash Redis)
+    UPSTASH_REDIS_REST_URL=your-upstash-redis-url
+    UPSTASH_REDIS_REST_TOKEN=your-upstash-redis-token
+    
+    # Stripe
+    STRIPE_SECRET_KEY=sk_test_xxx
+    STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+    STRIPE_WEBHOOK_SECRET=whsec_xxx
+    
+    # Lemon Squeezy (optional)
+    LEMON_SQUEEZY_SECRET_KEY=sk_live_xxx
+    LEMON_SQUEEZY_STORE_ID=your-store-id
+    LEMON_SQUEEZY_WEBHOOK_SECRET=whsec_xxx
     ```
   </Tab>
   <Tab value="Supabase">
     ```txt title=".env"
-    NEXT_PUBLIC_SUPABASE_URL=
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=
-    SUPABASE_SERVICE_ROLE_KEY=
-    # Add any other required env vars
+    # Supabase
+    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+    SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+    
+    # App URLs
+    NEXT_PUBLIC_APP_URL=http://localhost:3000
+    SITE_URL=http://localhost:3000
+    
+    # Email (Resend)
+    RESEND_API_KEY=your-resend-api-key
+    RESEND_FROM_EMAIL=no-reply@yourdomain.com
+    
+    # Stripe
+    STRIPE_SECRET_KEY=sk_test_xxx
+    STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+    STRIPE_WEBHOOK_SECRET=whsec_xxx
+    
+    # Lemon Squeezy (optional)
+    LEMON_SQUEEZY_SECRET_KEY=sk_live_xxx
+    LEMON_SQUEEZY_STORE_ID=your-store-id
+    LEMON_SQUEEZY_WEBHOOK_SECRET=whsec_xxx
     ```
   </Tab>
 </Tabs>
@@ -92,7 +167,7 @@ Set up your environment variables:
 ### 4. Run the App
 
 ```sh
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -109,10 +184,7 @@ Requires Node 18.17 or higher (`node -v` to check)
 
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
 
-
-<Callout>
-You are ready to build and launch your project!
-</Callout>
+<Callout>You are ready to build and launch your project!</Callout>
 <Tabs
 	groupId='file-structure'
 	items={['Postgres', 'MongoDB', 'Supabase']}
@@ -127,20 +199,68 @@ You are ready to build and launch your project!
 			>
 				<File name='layout.tsx' />
 				<File name='page.tsx' />
-				<File name='global.css' />
+				<File name='globals.css' />
+				<File name='not-found.tsx' />
+				<File name='error.tsx' />
 			</Folder>
 			<Folder name='components'>
-				<File name='button.tsx' />
-				<File name='tabs.tsx' />
-				<File name='dialog.tsx' />
+				<Folder name='common'>
+					<File name='Header.tsx' />
+					<File name='Hero.tsx' />
+					<File name='Footer.tsx' />
+					<File name='Pricing.tsx' />
+					<File name='CheckoutButton.tsx' />
+				</Folder>
+				<Folder name='ui'>
+					<File name='button.tsx' />
+					<File name='input.tsx' />
+					<File name='dialog.tsx' />
+				</Folder>
+				<Folder name='auth'>
+					<File name='signIn.tsx' />
+					<File name='signUp.tsx' />
+					<File name='protectedLayout.tsx' />
+				</Folder>
 			</Folder>
-			<Folder name='libs'>
+			<Folder name='lib'>
+				<Folder name='db'>
+					<Folder name='prisma'>
+						<File name='client.ts' />
+					</Folder>
+				</Folder>
+				<Folder name='email'>
+					<File name='sendEmail.ts' />
+					<File name='index.ts' />
+				</Folder>
+				<Folder name='stripe'>
+					<File name='utils.ts' />
+					<File name='payment.tsx' />
+				</Folder>
+				<Folder name='redis'>
+					<File name='index.ts' />
+					<File name='ratelimit.ts' />
+				</Folder>
 				<File name='auth.ts' />
-				<File name='db-postgres.ts' />
+				<File name='auth-client.ts' />
+				<File name='auth-utils.ts' />
+				<File name='api.ts' />
+				<File name='config-utils.ts' />
+				<File name='seo.tsx' />
+				<File name='utils.ts' />
 			</Folder>
+			<Folder name='prisma'>
+				<File name='schema.prisma' />
+			</Folder>
+			<Folder name='public'>
+				<File name='next.svg' />
+				<File name='vercel.svg' />
+				<File name='globe.svg' />
+				<File name='file.svg' />
+				<File name='window.svg' />
+			</Folder>
+			<File name='config.ts' />
 			<File name='package.json' />
 			<File name='.env' />
-			<File name='config.js' />
 		</Files>
 	</Tab>
 	<Tab value='MongoDB'>
@@ -151,20 +271,65 @@ You are ready to build and launch your project!
 			>
 				<File name='layout.tsx' />
 				<File name='page.tsx' />
-				<File name='global.css' />
+				<File name='globals.css' />
+				<File name='not-found.tsx' />
+				<File name='error.tsx' />
 			</Folder>
 			<Folder name='components'>
-				<File name='button.tsx' />
-				<File name='tabs.tsx' />
-				<File name='dialog.tsx' />
+				<Folder name='common'>
+					<File name='Header.tsx' />
+					<File name='Hero.tsx' />
+					<File name='Footer.tsx' />
+					<File name='Pricing.tsx' />
+					<File name='CheckoutButton.tsx' />
+				</Folder>
+				<Folder name='ui'>
+					<File name='button.tsx' />
+					<File name='input.tsx' />
+					<File name='dialog.tsx' />
+				</Folder>
+				<Folder name='auth'>
+					<File name='signIn.tsx' />
+					<File name='signUp.tsx' />
+					<File name='protectedLayout.tsx' />
+				</Folder>
 			</Folder>
-			<Folder name='libs'>
+			<Folder name='lib'>
+				<Folder name='db'>
+					<Folder name='mongodb'>
+						<File name='client.ts' />
+					</Folder>
+				</Folder>
+				<Folder name='email'>
+					<File name='sendEmail.ts' />
+					<File name='index.ts' />
+				</Folder>
+				<Folder name='stripe'>
+					<File name='utils.ts' />
+					<File name='payment.tsx' />
+				</Folder>
+				<Folder name='redis'>
+					<File name='index.ts' />
+					<File name='ratelimit.ts' />
+				</Folder>
 				<File name='auth.ts' />
-				<File name='db-mongodb.ts' />
+				<File name='auth-client.ts' />
+				<File name='auth-utils.ts' />
+				<File name='api.ts' />
+				<File name='config-utils.ts' />
+				<File name='seo.tsx' />
+				<File name='utils.ts' />
 			</Folder>
+			<Folder name='public'>
+				<File name='next.svg' />
+				<File name='vercel.svg' />
+				<File name='globe.svg' />
+				<File name='file.svg' />
+				<File name='window.svg' />
+			</Folder>
+			<File name='config.ts' />
 			<File name='package.json' />
 			<File name='.env' />
-			<File name='config.js' />
 		</Files>
 	</Tab>
 	<Tab value='Supabase'>
@@ -175,24 +340,63 @@ You are ready to build and launch your project!
 			>
 				<File name='layout.tsx' />
 				<File name='page.tsx' />
-				<File name='global.css' />
+				<File name='globals.css' />
+				<File name='not-found.tsx' />
+				<File name='error.tsx' />
 			</Folder>
 			<Folder name='components'>
-				<File name='button.tsx' />
-				<File name='tabs.tsx' />
-				<File name='dialog.tsx' />
+				<Folder name='common'>
+					<File name='Header.tsx' />
+					<File name='Hero.tsx' />
+					<File name='Footer.tsx' />
+					<File name='Pricing.tsx' />
+					<File name='CheckoutButton.tsx' />
+				</Folder>
+				<Folder name='ui'>
+					<File name='button.tsx' />
+					<File name='input.tsx' />
+					<File name='dialog.tsx' />
+				</Folder>
+				<Folder name='auth'>
+					<File name='signIn.tsx' />
+					<File name='signUp.tsx' />
+					<File name='protectedLayout.tsx' />
+				</Folder>
 			</Folder>
-			<Folder name='libs'>
-				<File name='auth.ts' />
-				<File name='db-supabase.ts' />
+			<Folder name='lib'>
+				<Folder name='supabase'>
+					<File name='client.ts' />
+					<File name='server.ts' />
+					<File name='middleware.ts' />
+				</Folder>
+				<Folder name='email'>
+					<File name='sendEmail.ts' />
+					<File name='index.ts' />
+				</Folder>
+				<Folder name='stripe'>
+					<File name='utils.ts' />
+					<File name='payment.tsx' />
+				</Folder>
+				<File name='auth-utils.ts' />
+				<File name='api.ts' />
+				<File name='config-utils.ts' />
+				<File name='seo.tsx' />
+				<File name='utils.ts' />
 			</Folder>
+			<Folder name='public'>
+				<File name='next.svg' />
+				<File name='vercel.svg' />
+				<File name='globe.svg' />
+				<File name='file.svg' />
+				<File name='window.svg' />
+			</Folder>
+			<File name='config.ts' />
 			<File name='package.json' />
 			<File name='.env' />
-			<File name='config.js' />
 		</Files>
 	</Tab>
 </Tabs>
 
-**config.js**: It is where you configure your app. Each key is documented to know how and what env
+**config.ts**: It is where you configure your app. Each key is documented to know how and what env
 
 </Steps>
