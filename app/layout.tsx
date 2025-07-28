@@ -1,29 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { RootProvider } from "fumadocs-ui/provider";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { RootProvider } from 'fumadocs-ui/provider';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+	variable: '--font-geist-sans',
+	subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+	variable: '--font-geist-mono',
+	subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Free Ship Fast - Free Next.js SaaS Boilerplate",
-  description: "Launch your SaaS product fast with our free, open-source Next.js boilerplate. Complete with authentication, payments, database integration, and more.",
+	title: 'Free Ship Fast - Free Next.js SaaS Boilerplate',
+	description:
+		'Launch your SaaS product fast with our free, open-source Next.js boilerplate. Complete with authentication, payments, database integration, and more.',
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
+	return (
 		<html lang='en'>
 			<head>
 				<meta
@@ -34,7 +35,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.className} ${geistMono.variable} antialiased `}
 			>
-				<RootProvider>{children}</RootProvider>
+				<RootProvider theme={{ forcedTheme: 'dark' }}>{children}</RootProvider>
 			</body>
 		</html>
 	);
