@@ -1,0 +1,228 @@
+import { NextResponse, type NextRequest } from 'next/server';
+import { createCheckoutSession } from '@/lib/stripe/utils';
+
+{{#if (eq database "supabase")}}
+import { createClient } from '@/lib/supabase/server';
+{{else if (eq database "prisma")}}
+import { auth } from '@/lib/auth';
+import { PrismaClient } from '@/prisma/generated/prisma';
+{{else if (eq database "mongoose")}}
+import { auth } from '@/lib/auth';
+import mongoose from 'mongoose';
+import { User } from '@/lib/db/models/User';
+{{else}}
+import { auth } from '@/lib/auth';
+import { mongo } from '@/lib/db/mongodb/client';
+import { ObjectId } from 'mongodb';
+{{/if}}
+
+interface User {
+	id: string;
+	email: string;
+	customer_id?: string;
+}
+
+{{#if (eq database "supabase")}}
+// Get user session from Supabase
+const getAuthSession = async (req: NextRequest) => {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	return user ? { user: { id: user.id, email: user.email } } : null;
+};
+
+// Get user from Supabase database
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const supabase = await createClient();
+
+	// Try to find existing profile
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select('id, email, customer_id')
+		.eq('id', userId)
+		.single();
+
+	// If no profile exists, create one with email from auth
+	if (!profile) {
+		const {
+			data: { user: authUser },
+		} = await supabase.auth.getUser();
+
+		const { data: newProfile, error } = await supabase
+			.from('profiles')
+			.insert([{ id: userId, email: authUser?.email }])
+			.select('id, email, customer_id')
+			.single();
+
+		if (error) {
+			console.error('Failed to create profile:', error);
+			throw new Error('Failed to create user profile');
+		}
+
+		return newProfile;
+	}
+
+	return profile;
+};
+{{else if (eq database "prisma")}}
+const prisma = new PrismaClient();
+
+// Auth handler for Better Auth
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+// Database handler for Prisma
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: { id: true, email: true, customer_id: true },
+	});
+	await prisma.$disconnect();
+	return user
+		? {
+				id: user.id,
+				email: user.email,
+				customer_id: user.customer_id || undefined,
+			}
+		: null;
+};
+{{else if (eq database "mongoose")}}
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	try {
+		if (mongoose.connection.readyState !== 1) {
+			await mongoose.connect(process.env.MONGODB_URI as string);
+		}
+
+		const user = await User.findById(userId).select('_id email customer_id').lean();
+
+		return user
+			? {
+					id: user._id.toString(),
+					email: user.email,
+					customer_id: user.customer_id || undefined,
+				}
+			: null;
+	} catch (error) {
+		console.error('Database connection error:', error);
+		throw error;
+	}
+};
+{{else}}
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const db = mongo.db(process.env.MONGODB_DATABASE);
+	const user = await db
+		.collection('users')
+		.findOne(
+			{ _id: new ObjectId(userId) },
+			{ projection: { _id: 1, email: 1, customer_id: 1 } }
+		);
+
+	return user
+		? {
+				id: user._id.toString(),
+				email: user.email,
+				customer_id: user.customer_id || undefined,
+			}
+		: null;
+};
+{{/if}}
+
+/**
+ * Create Stripe checkout session
+{{#if (eq database "supabase")}}
+ * Uses Supabase for authentication and database
+{{else if (eq database "prisma")}}
+ * Uses Prisma database and Better Auth
+{{else if (eq database "mongoose")}}
+ * Uses Mongoose ODM and Better Auth
+{{else}}
+ * Uses MongoDB driver and Better Auth
+{{/if}}
+ */
+export async function POST(req: NextRequest) {
+	try {
+{{#if (eq database "supabase")}}
+		// Get user session from Supabase
+{{else}}
+		// Get user session from Better Auth
+{{/if}}
+		const session = await getAuthSession(req);
+
+		if (!session?.user?.id) {
+			return NextResponse.json(
+				{ error: 'Authentication required' },
+				{ status: 401 }
+			);
+		}
+
+		const body = await req.json();
+		const { priceId, mode, successUrl, cancelUrl } = body;
+
+		// Validate required fields
+		if (!priceId) {
+			return NextResponse.json(
+				{ error: 'Price ID is required' },
+				{ status: 400 }
+			);
+		}
+
+		if (!successUrl || !cancelUrl) {
+			return NextResponse.json(
+				{ error: 'Success and cancel URLs are required' },
+				{ status: 400 }
+			);
+		}
+
+		if (!mode) {
+			return NextResponse.json(
+				{ error: 'Checkout mode is required' },
+				{ status: 400 }
+			);
+		}
+
+		// Get user from database
+		const user = await getUserFromDatabase(session.user.id);
+
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		// Create checkout session
+		const checkoutUrl = await createCheckoutSession({
+			priceId,
+			mode,
+			successUrl,
+			cancelUrl,
+			clientReferenceId: user.id,
+			customer: {
+				email: user.email,
+				id: user.customer_id,
+			},
+		});
+
+		if (!checkoutUrl) {
+			return NextResponse.json(
+				{ error: 'Failed to create checkout' },
+				{ status: 500 }
+			);
+		}
+
+		return NextResponse.json({ url: checkoutUrl });
+	} catch (error) {
+		console.error('Checkout error:', error);
+		return NextResponse.json(
+			{ error: 'Internal server error' },
+			{ status: 500 }
+		);
+	}
+}

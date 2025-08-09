@@ -1,0 +1,33 @@
+{
+  "name": "create-free-ship-fast",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Create a free ship fast project",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "create-free-ship-fast": "./bin/create-free-ship-fast.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "@types/fs-extra": "^11.0.4",
+    "consola": "^3.4.2",
+    "execa": "^9.6.0",
+    "fs-extra": "^11.3.1",
+    "globby": "^14.1.0",
+    "gradient-string": "^3.0.0",
+    "handlebars": "^4.7.8",
+    "trpc-cli": "^0.10.2",
+    "zod": "^4.0.14"
+  }
+}

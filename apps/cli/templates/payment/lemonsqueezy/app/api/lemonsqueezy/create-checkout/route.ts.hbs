@@ -1,0 +1,213 @@
+import { createCheckoutSession } from '@/lib/lemonSqueezy/utils';
+import { NextRequest, NextResponse } from 'next/server';
+
+{{#if (eq database "supabase")}}
+import { createClient } from '@/lib/supabase/server';
+{{else if (eq database "prisma")}}
+import { auth } from '@/lib/auth';
+import { PrismaClient } from '@/prisma/generated/prisma';
+{{else if (eq database "mongoose")}}
+import { auth } from '@/lib/auth';
+import mongoose from 'mongoose';
+import { User } from '@/lib/db/models/User';
+{{else}}
+import { auth } from '@/lib/auth';
+import { mongo } from '@/lib/db/mongodb/client';
+import { ObjectId } from 'mongodb';
+{{/if}}
+
+// Simple user data interface
+interface User {
+	id: string;
+	email: string;
+}
+
+{{#if (eq database "supabase")}}
+// Get user session from Supabase
+const getAuthSession = async (req: NextRequest) => {
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	return user ? { user: { id: user.id, email: user.email } } : null;
+};
+
+// Get user from Supabase database
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const supabase = await createClient();
+
+	// Try to find existing profile
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select('id, email')
+		.eq('id', userId)
+		.single();
+
+	// If no profile exists, create one with email from auth
+	if (!profile) {
+		const {
+			data: { user: authUser },
+		} = await supabase.auth.getUser();
+
+		const { data: newProfile, error } = await supabase
+			.from('profiles')
+			.insert([{ id: userId, email: authUser?.email }])
+			.select('id, email')
+			.single();
+
+		if (error) {
+			console.error('Failed to create profile:', error);
+			throw new Error('Failed to create user profile');
+		}
+
+		return newProfile;
+	}
+
+	return profile;
+};
+{{else if (eq database "prisma")}}
+const prisma = new PrismaClient();
+
+// Auth handler for Better Auth
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+// Database handler for Prisma
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: { id: true, email: true },
+	});
+	await prisma.$disconnect();
+	return user;
+};
+{{else if (eq database "mongoose")}}
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	try {
+		if (mongoose.connection.readyState !== 1) {
+			await mongoose.connect(process.env.MONGODB_URI as string);
+		}
+
+		const user = await User.findById(userId).select('_id email').lean();
+
+		return user
+			? {
+					id: user._id.toString(),
+					email: user.email,
+				}
+			: null;
+	} catch (error) {
+		console.error('Database connection error:', error);
+		throw error;
+	}
+};
+{{else}}
+const getAuthSession = async (req: NextRequest) => {
+	return await auth.api.getSession({ headers: req.headers });
+};
+
+const getUserFromDatabase = async (userId: string): Promise<User | null> => {
+	const db = mongo.db(process.env.MONGODB_DATABASE);
+	const user = await db
+		.collection('users')
+		.findOne(
+			{ _id: new ObjectId(userId) },
+			{ projection: { _id: 1, email: 1 } }
+		);
+
+	return user
+		? {
+				id: user._id.toString(),
+				email: user.email,
+			}
+		: null;
+};
+{{/if}}
+
+/**
+ * Create LemonSqueezy checkout session
+{{#if (eq database "supabase")}}
+ * Uses Supabase for authentication and database
+{{else if (eq database "prisma")}}
+ * Uses Prisma database and Better Auth
+{{else if (eq database "mongoose")}}
+ * Uses Mongoose ODM and Better Auth
+{{else}}
+ * Uses MongoDB driver and Better Auth
+{{/if}}
+ */
+export async function POST(req: NextRequest) {
+	try {
+		const body = await req.json();
+		const { variantId, successUrl, cancelUrl, discountCode } = body;
+
+		// Validate required fields
+		if (!variantId) {
+			return NextResponse.json(
+				{ error: 'Variant ID is required' },
+				{ status: 400 }
+			);
+		}
+
+		if (!successUrl) {
+			return NextResponse.json(
+				{ error: 'Success URL is required' },
+				{ status: 400 }
+			);
+		}
+
+{{#if (eq database "supabase")}}
+		// Get user session from Supabase
+{{else}}
+		// Get user session from Better Auth
+{{/if}}
+		const session = await getAuthSession(req);
+
+		let userId: string | undefined;
+		let userEmail: string | undefined;
+
+		// If user is logged in, get their data
+		if (session?.user?.id) {
+			try {
+				const user = await getUserFromDatabase(session.user.id);
+				if (user) {
+					userId = user.id;
+					userEmail = user.email;
+				}
+			} catch (error) {
+				console.error('Failed to fetch user:', error);
+				// Continue without user data - checkout still works
+			}
+		}
+
+		// Create checkout session
+		const checkoutUrl = await createCheckoutSession({
+			variantId,
+			successUrl,
+			cancelUrl,
+			userId,
+			email: userEmail,
+			discountCode,
+		});
+
+		if (!checkoutUrl) {
+			return NextResponse.json(
+				{ error: 'Failed to create checkout' },
+				{ status: 500 }
+			);
+		}
+
+		return NextResponse.json({ url: checkoutUrl });
+	} catch (error) {
+		console.error('Checkout error:', error);
+		return NextResponse.json(
+			{ error: 'Internal server error' },
+			{ status: 500 }
+		);
+	}
+} 

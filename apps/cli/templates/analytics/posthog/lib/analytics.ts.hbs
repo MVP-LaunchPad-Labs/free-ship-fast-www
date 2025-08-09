@@ -1,0 +1,62 @@
+import posthog from 'posthog-js'; interface PostHogEventData { [key: string]:
+any; } class PostHogAnalytics { private isEnabled: boolean; constructor() {
+this.isEnabled = typeof window !== 'undefined' && process.env.NODE_ENV ===
+'production' && !!process.env.NEXT_PUBLIC_POSTHOG_KEY; } // Identify user
+identify(userId: string, userProperties?: PostHogEventData) { if
+(!this.isEnabled || !posthog) return; posthog.identify(userId, userProperties);
+} // Reset user identity reset() { if (!this.isEnabled || !posthog) return;
+posthog.reset(); } // Track page views pageview(url?: string, properties?:
+PostHogEventData) { if (!this.isEnabled || !posthog) return;
+posthog.capture('$pageview', { url, ...properties }); } // Track custom events
+track(eventName: string, properties?: PostHogEventData) { if (!this.isEnabled ||
+!posthog) return; posthog.capture(eventName, properties); } // Set user
+properties setUserProperties(properties: PostHogEventData) { if (!this.isEnabled
+|| !posthog) return; posthog.people.set(properties); } // Feature flags
+isFeatureEnabled(flagKey: string): boolean { if (!this.isEnabled || !posthog)
+return false; return posthog.isFeatureEnabled(flagKey); }
+getFeatureFlag(flagKey: string) { if (!this.isEnabled || !posthog) return
+undefined; return posthog.getFeatureFlag(flagKey); } // Common event tracking
+methods trackClick(element: string, properties?: PostHogEventData) {
+this.track('button_clicked', { element, ...properties }); }
+trackConversion(type: string, value?: number, properties?: PostHogEventData) {
+this.track('conversion', { type, value, ...properties }); } trackSignup(method?:
+string, properties?: PostHogEventData) { this.track('user_signed_up', { method,
+...properties }); } trackLogin(method?: string, properties?: PostHogEventData) {
+this.track('user_logged_in', { method, ...properties }); } trackLogout() {
+this.track('user_logged_out'); } trackPurchase(productId: string, amount:
+number, currency = 'USD', properties?: PostHogEventData) {
+this.track('purchase_completed', { product_id: productId, amount, currency,
+...properties }); } trackSearch(query: string, results?: number, properties?:
+PostHogEventData) { this.track('search_performed', { query, results,
+...properties }); } trackError(error: string, page?: string, properties?:
+PostHogEventData) { this.track('error_occurred', { error, page, ...properties
+}); } trackFormSubmission(formName: string, success: boolean, properties?:
+PostHogEventData) { this.track('form_submitted', { form_name: formName, success,
+...properties }); } trackFileDownload(fileName: string, fileType?: string,
+properties?: PostHogEventData) { this.track('file_downloaded', { file_name:
+fileName, file_type: fileType, ...properties }); } trackVideoPlay(videoTitle:
+string, duration?: number, properties?: PostHogEventData) {
+this.track('video_played', { video_title: videoTitle, duration, ...properties
+}); } trackSocialShare(platform: string, content?: string, properties?:
+PostHogEventData) { this.track('content_shared', { platform, content,
+...properties }); } } // Export singleton instance export const analytics = new
+PostHogAnalytics(); // Export utility functions export const identify =
+analytics.identify.bind(analytics); export const reset =
+analytics.reset.bind(analytics); export const trackEvent =
+analytics.track.bind(analytics); export const trackPageview =
+analytics.pageview.bind(analytics); export const trackClick =
+analytics.trackClick.bind(analytics); export const trackConversion =
+analytics.trackConversion.bind(analytics); export const trackSignup =
+analytics.trackSignup.bind(analytics); export const trackLogin =
+analytics.trackLogin.bind(analytics); export const trackLogout =
+analytics.trackLogout.bind(analytics); export const trackPurchase =
+analytics.trackPurchase.bind(analytics); export const trackSearch =
+analytics.trackSearch.bind(analytics); export const trackError =
+analytics.trackError.bind(analytics); export const trackFormSubmission =
+analytics.trackFormSubmission.bind(analytics); export const trackFileDownload =
+analytics.trackFileDownload.bind(analytics); export const trackVideoPlay =
+analytics.trackVideoPlay.bind(analytics); export const trackSocialShare =
+analytics.trackSocialShare.bind(analytics); export const setUserProperties =
+analytics.setUserProperties.bind(analytics); export const isFeatureEnabled =
+analytics.isFeatureEnabled.bind(analytics); export const getFeatureFlag =
+analytics.getFeatureFlag.bind(analytics);

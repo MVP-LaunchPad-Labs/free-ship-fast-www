@@ -1,0 +1,30 @@
+interface UmamiEventData { [key: string]: string | number | boolean; } class
+UmamiAnalytics { private websiteId: string; private isEnabled: boolean;
+constructor(websiteId: string) { this.websiteId = websiteId; this.isEnabled =
+typeof window !== 'undefined' && process.env.NODE_ENV === 'production' &&
+!!websiteId; } // Track page views (automatically tracked by script)
+pageview(url?: string) { if (!this.isEnabled || !(window as any).umami) return;
+if (url) { (window as any).umami.track(url); } } // Track custom events
+track(eventName: string, eventData?: UmamiEventData) { if (!this.isEnabled ||
+!(window as any).umami) return; (window as any).umami.track(eventName,
+eventData); } // Common event tracking methods trackClick(element: string,
+data?: UmamiEventData) { this.track('click', { element, ...data }); }
+trackConversion(type: string, value?: number, data?: UmamiEventData) {
+this.track('conversion', { type, value, ...data }); } trackSignup(method?:
+string) { this.track('signup', { method }); } trackLogin(method?: string) {
+this.track('login', { method }); } trackPurchase(productId: string, amount:
+number, currency = 'USD') { this.track('purchase', { productId, amount, currency
+}); } trackSearch(query: string, results?: number) { this.track('search', {
+query, results }); } trackError(error: string, page?: string) {
+this.track('error', { error, page }); } } // Export singleton instance export
+const umami = new UmamiAnalytics(process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ||
+''); // Export utility functions export const trackEvent =
+umami.track.bind(umami); export const trackPageview =
+umami.pageview.bind(umami); export const trackClick =
+umami.trackClick.bind(umami); export const trackConversion =
+umami.trackConversion.bind(umami); export const trackSignup =
+umami.trackSignup.bind(umami); export const trackLogin =
+umami.trackLogin.bind(umami); export const trackPurchase =
+umami.trackPurchase.bind(umami); export const trackSearch =
+umami.trackSearch.bind(umami); export const trackError =
+umami.trackError.bind(umami);
