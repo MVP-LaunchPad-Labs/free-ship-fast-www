@@ -1,0 +1,92 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+{{#unless (eq auth 'none')}}
+	import OAuthButton from "./oauthButton";
+	{{#if (eq auth 'betterAuth')}}
+		import MagicLink from "./MagicLink";
+	{{/if}}
+{{/unless}}
+
+export default function SignUp() {
+{{#if (eq auth 'none')}}
+	// No authentication - show simple message return (
+	<Card className='w-full max-w-sm mx-auto'>
+		<CardHeader className='text-center'>
+			<CardTitle className='text-xl'>Welcome</CardTitle>
+			<p className='text-sm text-muted-foreground mt-2'>
+				User registration is not available
+			</p>
+		</CardHeader>
+		<CardContent className='flex flex-col gap-4'>
+			<div className='text-center text-sm text-muted-foreground'>
+				To enable user registration, configure your auth provider in the project
+				settings.
+			</div>
+		</CardContent>
+	</Card>
+	);
+{{/if}}
+
+{{#unless (eq auth 'none')}}
+	return (
+	<Card className='w-full max-w-sm mx-auto'>
+		<CardHeader className='text-center'>
+			<CardTitle className='text-xl'>Create Account</CardTitle>
+			<p className='text-sm text-muted-foreground mt-2'>
+				Create your account to get started
+			</p>
+		</CardHeader>
+		<CardContent className='flex flex-col gap-4'>
+			{{#if (eq auth 'betterAuth')}}
+				<OAuthButton provider='google'>Continue with Google</OAuthButton>
+				<OAuthButton provider='github'>Continue with GitHub</OAuthButton>
+
+				<div className='relative'>
+					<div className='absolute inset-0 flex items-center'>
+						<span className='w-full border-t' />
+					</div>
+					<div className='relative flex justify-center text-xs uppercase'>
+						<span
+							className='bg-background px-2 text-muted-foreground border rounded-md py-0.5'
+						>
+							or
+						</span>
+					</div>
+				</div>
+
+				<MagicLink />
+			{{/if}}
+
+			{{#if (eq auth 'supabaseAuth')}}
+				<OAuthButton provider='google'>Continue with Google</OAuthButton>
+				<OAuthButton provider='github'>Continue with GitHub</OAuthButton>
+
+				<div className='relative'>
+					<div className='absolute inset-0 flex items-center'>
+						<span className='w-full border-t' />
+					</div>
+					<div className='relative flex justify-center text-xs uppercase'>
+						<span
+							className='bg-background px-2 text-muted-foreground border rounded-md py-0.5'
+						>
+							or
+						</span>
+					</div>
+				</div>
+
+				{/* Supabase has built-in magic link support */}
+				<div className='text-sm text-muted-foreground text-center'>
+					Magic link authentication available via Supabase
+				</div>
+			{{/if}}
+
+			<div className='text-center text-sm text-muted-foreground'>
+				Already have an account?{" "}
+				<a href='/sign-in' className='text-primary hover:underline'>
+					Sign in
+				</a>
+			</div>
+		</CardContent>
+	</Card>
+	);
+{{/unless}}
+}

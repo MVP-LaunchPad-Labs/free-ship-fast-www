@@ -1,0 +1,124 @@
+'use client';
+
+import { useState } from 'react';
+import { Loader2, CreditCard } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+{{#unless (eq payment "none")}}
+import apiClient from '@/lib/api';
+import { getPaymentConfig } from '@/lib/config-utils';
+{{/unless}}
+import config from '@/config';
+
+interface CheckoutButtonProps {
+	planId: string; // priceId for Stripe, variantId for LemonSqueezy
+	mode?: 'payment' | 'subscription';
+	className?: string;
+	children?: React.ReactNode;
+}
+
+/**
+ * Checkout button component with multi-provider payment support
+ */
+const CheckoutButton = ({
+	planId,
+	mode = 'payment',
+	className,
+	children,
+}: CheckoutButtonProps) => {
+	const [isLoading, setIsLoading] = useState(false);
+	{{#unless (eq payment "none")}}
+	const { provider } = getPaymentConfig();
+	{{/unless}}
+
+	const handlePayment = async () => {
+		if (isLoading) return;
+
+		{{#if (eq payment "none")}}
+		// No payment provider configured
+		toast.error('Payment processing is not configured');
+		return;
+		{{/if}}
+
+		setIsLoading(true);
+
+		try {
+			{{#unless (eq payment "none")}}
+			let url: string;
+
+			{{#if (eq payment "stripe")}}
+			if (provider === 'stripe') {
+				const response: { url: string } = await apiClient.post(
+					'/stripe/create-checkout',
+					{
+						priceId: planId,
+						successUrl: window.location.href,
+						cancelUrl: window.location.href,
+						mode,
+					}
+				);
+				url = response.url;
+			}
+			{{/if}}
+			{{#if (eq payment "lemonsqueezy")}}
+			if (provider === 'lemonsqueezy') {
+				const response: { url: string } = await apiClient.post(
+					'/lemonsqueezy/create-checkout',
+					{
+						variantId: planId,
+						successUrl: window.location.href,
+						cancelUrl: window.location.href,
+						mode,
+					}
+				);
+				url = response.url;
+			}
+			{{/if}}
+
+			// Redirect to checkout
+			if (url) {
+				window.location.href = url;
+			}
+			{{/unless}}
+		} catch (error) {
+			console.error('Payment error:', error);
+			toast.error('Failed to create checkout session');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<Button
+			onClick={handlePayment}
+			disabled={`${isLoading}{{#if (eq payment "none")}} || true{{/if}}`}
+			size='lg'
+			className={`w-full mt-8 gap-2 ${className || ''} {{#if (eq payment "none")}}opacity-50{{/if}}`}
+			data-slot='checkout-button'
+		>
+			{isLoading ? (
+				<>
+					<Loader2 className='size-4 animate-spin' />
+					Processing...
+				</>
+			) : (
+				<>
+					{children || (
+						<>
+							<CreditCard className='size-4' />
+							{{#if (eq payment "none")}}
+							Payment Not Available
+							{{/if}}
+							{{#unless (eq payment "none")}}
+							Get {config.appName}
+							{{/unless}}
+						</>
+					)}
+				</>
+			)}
+		</Button>
+	);
+};
+
+export default CheckoutButton;

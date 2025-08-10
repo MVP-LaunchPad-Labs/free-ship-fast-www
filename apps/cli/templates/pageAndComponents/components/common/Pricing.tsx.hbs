@@ -1,0 +1,251 @@
+import * as React from 'react';
+import { Check } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+} from '@/components/ui/card';
+{{#unless (eq payment "none")}}
+import CheckoutButton from './CheckoutButton';
+import { getPaymentConfig } from '@/lib/config-utils';
+{{/unless}}
+
+/**
+ * Pricing section component with shadcn/ui styling
+ */
+const Pricing = () => {
+	{{#if (eq payment "none")}}
+	// No payment provider - show simple pricing without checkout
+	const mockPlans = [
+		{
+			name: "Free",
+			price: 0,
+			features: ["Basic features", "Community support", "Standard documentation"],
+		},
+		{
+			name: "Pro",
+			price: 29,
+			features: ["All Free features", "Priority support", "Advanced documentation", "Custom integrations"],
+		},
+		{
+			name: "Enterprise",
+			price: 99,
+			features: ["All Pro features", "24/7 support", "Custom solutions", "Dedicated account manager"],
+		},
+	];
+	{{/if}}
+
+	{{#unless (eq payment "none")}}
+	const { provider, config: paymentConfig } = getPaymentConfig();
+	{{/unless}}
+
+	return (
+		<section
+			className='bg-muted/30 overflow-hidden'
+			id='pricing'
+			aria-labelledby='pricing-heading'
+			data-slot='pricing-section'
+		>
+			<div className='py-24 px-8 max-w-5xl mx-auto'>
+				<div className='flex flex-col text-center w-full mb-20'>
+					<h2 className='text-3xl md:text-4xl font-extrabold tracking-tight text-center text-foreground'>
+						{{#if (eq payment "none")}}
+						Simple pricing for everyone
+						{{/if}}
+						{{#unless (eq payment "none")}}
+						Choose the perfect plan and supercharge your app with our platform
+						{{/unless}}
+					</h2>
+				</div>
+
+				<div
+					className='relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8'
+					role='list'
+					aria-label='Pricing plans'
+				>
+					{{#if (eq payment "none")}}
+					{mockPlans.map((plan, index) => (
+						<div
+							key={index}
+							className='relative w-full max-w-lg'
+							role='listitem'
+						>
+							{plan.isFeatured && (
+								<div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20'>
+									<Badge
+										variant='default'
+										className='bg-primary text-primary-foreground border-0 text-xs font-semibold px-3 py-1'
+									>
+										POPULAR
+									</Badge>
+								</div>
+							)}
+
+							{plan.isFeatured && (
+								<div className='absolute -inset-[1px] rounded-xl bg-gradient-to-b from-primary/20 to-primary z-10' />
+							)}
+
+							<Card className='relative flex flex-col h-full z-10 bg-card border-border shadow-sm hover:shadow-md transition-shadow'>
+								<CardHeader className='pb-4'>
+									<div className='flex justify-between items-center gap-4'>
+										<div>
+											<h3 className='text-lg lg:text-xl font-bold text-card-foreground'>
+												{plan.name}
+											</h3>
+											{plan.description && (
+												<p className='text-muted-foreground mt-2'>
+													{plan.description}
+												</p>
+											)}
+										</div>
+									</div>
+								</CardHeader>
+
+								<CardContent className='flex-1 space-y-6'>
+									<div className='flex gap-2 items-end'>
+										{plan.priceAnchor && (
+											<div className='flex flex-col justify-end mb-[4px] text-lg'>
+												<p className='relative'>
+													<span className='absolute bg-muted-foreground h-[1.5px] inset-x-0 top-[53%]' />
+													<span className='text-muted-foreground'>
+														${plan.priceAnchor}
+													</span>
+												</p>
+											</div>
+										)}
+										<p className='text-5xl tracking-tight font-extrabold text-foreground'>
+											${plan.price.toFixed(2)}
+										</p>
+									</div>
+
+									{plan.features && (
+										<ul className='space-y-2.5 leading-relaxed text-base'>
+											{plan.features.map((feature, i) => (
+												<li
+													key={i}
+													className='flex items-center gap-2'
+												>
+													<Check className='size-[18px] text-primary shrink-0' />
+													<span className='text-card-foreground'>
+														{feature.name}
+													</span>
+												</li>
+											))}
+										</ul>
+									)}
+								</CardContent>
+
+								<CardFooter className='pt-4'>
+									<div className='w-full text-center'>
+										<p className='text-sm text-muted-foreground mb-2'>
+											Payment processing not configured
+										</p>
+										<div className='bg-muted/50 text-muted-foreground px-4 py-2 rounded-md text-sm'>
+											Configure your payment provider to enable checkout
+										</div>
+									</div>
+								</CardFooter>
+							</Card>
+						</div>
+					))}
+					{{/if}}
+
+					{{#unless (eq payment "none")}}
+					{paymentConfig.plans.map((plan, index) => {
+						const planId =
+							provider === 'stripe'
+								? (plan as any).priceId
+								: (plan as any).variantId;
+
+						return (
+							<div
+								key={planId || index}
+								className='relative w-full max-w-lg'
+								role='listitem'
+							>
+								{plan.isFeatured && (
+									<div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20'>
+										<Badge
+											variant='default'
+											className='bg-primary text-primary-foreground border-0 text-xs font-semibold px-3 py-1'
+										>
+											POPULAR
+										</Badge>
+									</div>
+								)}
+
+								{plan.isFeatured && (
+									<div className='absolute -inset-[1px] rounded-xl bg-gradient-to-b from-primary/20 to-primary z-10' />
+								)}
+
+								<Card className='relative flex flex-col h-full z-10 bg-card border-border shadow-sm hover:shadow-md transition-shadow'>
+									<CardHeader className='pb-4'>
+										<div className='flex justify-between items-center gap-4'>
+											<div>
+												<h3 className='text-lg lg:text-xl font-bold text-card-foreground'>
+													{plan.name}
+												</h3>
+												{plan.description && (
+													<p className='text-muted-foreground mt-2'>
+														{plan.description}
+													</p>
+												)}
+											</div>
+										</div>
+									</CardHeader>
+
+									<CardContent className='flex-1 space-y-6'>
+										<div className='flex gap-2 items-end'>
+											{plan.priceAnchor && (
+												<div className='flex flex-col justify-end mb-[4px] text-lg'>
+													<p className='relative'>
+														<span className='absolute bg-muted-foreground h-[1.5px] inset-x-0 top-[53%]' />
+														<span className='text-muted-foreground'>
+															${plan.priceAnchor}
+														</span>
+													</p>
+												</div>
+											)}
+											<p className='text-5xl tracking-tight font-extrabold text-foreground'>
+												${plan.price.toFixed(2)}
+											</p>
+										</div>
+
+										{plan.features && (
+											<ul className='space-y-2.5 leading-relaxed text-base'>
+												{plan.features.map((feature, i) => (
+													<li
+														key={i}
+														className='flex items-center gap-2'
+													>
+														<Check className='size-[18px] text-primary shrink-0' />
+														<span className='text-card-foreground'>
+															{feature.name}
+														</span>
+													</li>
+												))}
+											</ul>
+										)}
+									</CardContent>
+
+									<CardFooter className='pt-4'>
+										<CheckoutButton
+											planId={planId}
+											mode='subscription'
+										/>
+									</CardFooter>
+								</Card>
+							</div>
+						);
+					})}
+					{{/unless}}
+				</div>
+			</div>
+		</section>
+	);
+};
+
+export default Pricing; 

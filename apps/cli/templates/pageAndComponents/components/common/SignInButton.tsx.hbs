@@ -1,0 +1,102 @@
+"use client";
+
+import * as React from "react";
+{{#if (eq auth "betterAuth")}}
+import { authClient } from "@/lib/auth-client";
+{{/if}}
+{{#if (eq auth "supabaseAuth")}}
+import { createClient } from "@/lib/supabase/client";
+{{/if}}
+import { Button } from "@/components/ui/button";
+import config from "@/config";
+
+interface SignInButtonProps {
+	extraStyle?: string;
+}
+
+/**
+ * Sign-in button component
+ */
+const SignInButton = ({ extraStyle }: SignInButtonProps) => {
+	{{#if (eq auth "betterAuth")}}
+	const { data: session } = authClient.useSession();
+	
+	// If user is authenticated, redirect to dashboard
+	if (session) {
+		return (
+			<Button
+				asChild
+				variant="default"
+				className={extraStyle}
+				data-slot="dashboard-button"
+			>
+				<a href={config.auth.callbackUrl}>Dashboard</a>
+			</Button>
+		);
+	}
+	{{/if}}
+
+	{{#if (eq auth "supabaseAuth")}}
+	const [session, setSession] = React.useState<any>(null);
+	
+	React.useEffect(() => {
+		const supabase = createClient();
+		
+		// Get initial session
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			setSession(session);
+		});
+
+		// Listen for auth changes
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((_event, session) => {
+			setSession(session);
+		});
+
+		return () => subscription.unsubscribe();
+	}, []);
+	
+	// If user is authenticated, redirect to dashboard
+	if (session) {
+		return (
+			<Button
+				asChild
+				variant="default"
+				className={extraStyle}
+				data-slot="dashboard-button"
+			>
+				<a href={config.auth.callbackUrl}>Dashboard</a>
+			</Button>
+		);
+	}
+	{{/if}}
+
+	{{#if (eq auth "none")}}
+	return (
+		<Button
+			disabled
+			variant="outline"
+			className={extraStyle}
+			data-slot="signin-button"
+		>
+			Sign In (Not Available)
+		</Button>
+	);
+	{{/if}}
+
+	{{#unless (eq auth "none")}}
+	return (
+		<Button
+			asChild
+			variant="default"
+			className={extraStyle}
+			data-slot="signin-button"
+		>
+			<a href={config.auth.loginUrl}>Get Started</a>
+		</Button>
+	);
+	{{/unless}}
+};
+
+export default SignInButton;

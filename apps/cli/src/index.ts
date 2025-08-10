@@ -8,6 +8,7 @@ import {
 	AnalyticsSchema,
 } from './types';
 import z from 'zod';
+import { createProjectHandler } from './helpers/projectGeneration/commandHandlers';
 
 const t = trpcServer.initTRPC.meta<TrpcCliMeta>().create();
 
@@ -38,12 +39,13 @@ const router = t.router({
 			])
 		)
 		.mutation(async ({ input }) => {
+			console.log(input);
 			const [projectName, options] = input;
 			const combinedInput = {
 				projectName,
 				...options,
 			};
-			// await createProjectHandler(combinedInput);
+			await createProjectHandler(combinedInput);
 		}),
 });
 

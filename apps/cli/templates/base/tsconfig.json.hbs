@@ -27,19 +27,9 @@
     "./next-env.d.ts",
     "./**/*.ts",
     "./**/*.tsx",
-    "./.next/types/**/*.ts",
-    {{#if (eq runtime "workers")}}
-    "../server/worker-configuration.d.ts"
-    {{/if}}
+    "./.next/types/**/*.ts"
   ],
   "exclude": [
     "./node_modules"
-  ],
-  {{#unless (or (eq backend "convex") (eq backend "none"))}}
-  "references": [
-    {
-      "path": "../server"
-    }
   ]
-  {{/unless}}
 }

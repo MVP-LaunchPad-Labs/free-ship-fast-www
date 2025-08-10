@@ -10,6 +10,8 @@ import { createReadme } from "./createReadme";
 import { installDependencies } from "./installDependencies";
 import { initializeGit } from "./git";
 import { displayPostInstallInstructions } from "./postInstallation";
+import { setupPageAndComponentsTemplate } from "./templateManager";
+
 export async function createProject(options: ProjectConfig) {
 	const projectDir = options.projectDir;
 	try {
@@ -30,7 +32,8 @@ export async function createProject(options: ProjectConfig) {
 		if(options.email) {
 			await setupEmailTemplate(projectDir, options);
 		}
-
+		await setupPageAndComponentsTemplate(projectDir, options);
+		
 		await setupEnvironmentVariables(options);
 		await updatePackageConfigurations(projectDir, options);
 		await createReadme(projectDir, options);

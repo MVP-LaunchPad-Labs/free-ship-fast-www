@@ -1,0 +1,34 @@
+{{#if (eq auth 'betterAuth')}}
+	import { getSession } from "@/lib/auth-server";
+{{/if}}
+{{#if (eq auth 'supabaseAuth')}}
+	import { createClient } from "@/lib/supabase/server";
+{{/if}}
+import { redirect } from "next/navigation"; import Header from
+"@/components/common/Header"; import Sidebar from "@/components/common/Sidebar";
+export default async function RootLayout({ children, }: { children:
+React.ReactNode; }) {
+{{#if (eq auth 'betterAuth')}}
+	const session = await getSession(); if (!session) { redirect("/sign-in"); }
+{{/if}}
+
+{{#if (eq auth 'supabaseAuth')}}
+	const supabase = createClient(); const { data: { session } } = await
+	supabase.auth.getSession(); if (!session) { redirect("/sign-in"); }
+{{/if}}
+
+{{#if (eq auth 'none')}}
+	// No authentication - layout is publicly accessible
+{{/if}}
+
+return (
+<div className='min-h-screen bg-background'>
+	<Header />
+	<div className='flex'>
+		<Sidebar />
+		<main className='flex-1 p-6'>
+			{children}
+		</main>
+	</div>
+</div>
+); }

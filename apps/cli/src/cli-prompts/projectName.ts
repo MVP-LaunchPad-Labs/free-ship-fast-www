@@ -51,7 +51,7 @@ export async function getProjectName(initialName?: string): Promise<string> {
 			message:
 				'Enter your project name or path (relative to current directory)',
 			placeholder: defaultName,
-			initialValue: initialName || defaultName,
+			initialValue: initialName || '',
 			defaultValue: defaultName,
 			validate: (value) => {
 				const nameToUse = value.trim() || defaultName;

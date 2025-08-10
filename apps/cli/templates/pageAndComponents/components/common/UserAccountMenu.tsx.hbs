@@ -1,0 +1,184 @@
+"use client";
+
+import * as React from "react";
+import { LogOut, User, CreditCard } from "lucide-react";
+{{#if (eq auth "betterAuth")}}
+import { authClient } from "@/lib/auth-client";
+{{/if}}
+{{#if (eq auth "supabaseAuth")}}
+import { createClient } from "@/lib/supabase/client";
+{{/if}}
+{{#unless (eq payment "none")}}
+import apiClient from "@/lib/api";
+{{/unless}}
+
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+
+export default function UserAccountMenu() {
+	{{#if (eq auth "betterAuth")}}
+	const { data: session } = authClient.useSession();
+	{{/if}}
+
+	{{#if (eq auth "supabaseAuth")}}
+	const [session, setSession] = React.useState<any>(null);
+	
+	React.useEffect(() => {
+		const supabase = createClient();
+		
+		// Get initial session
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			setSession(session);
+		});
+
+		// Listen for auth changes
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((_event, session) => {
+			setSession(session);
+		});
+
+		return () => subscription.unsubscribe();
+	}, []);
+	{{/if}}
+
+	{{#unless (eq payment "none")}}
+	const handleBilling = async () => {
+		try {
+			const response: { url: string } = await apiClient.post("/billing/portal");
+			window.location.href = response.url;
+		} catch (error) {
+			console.error("Billing portal error:", error);
+			toast.error("Failed to open billing portal");
+		}
+	};
+	{{/unless}}
+
+	const handleSignOut = async () => {
+		try {
+			{{#if (eq auth "betterAuth")}}
+			await authClient.signOut({
+				fetchOptions: {
+					onSuccess: () => {
+						window.location.href = "/";
+					},
+				},
+			});
+			{{/if}}
+
+			{{#if (eq auth "supabaseAuth")}}
+			const supabase = createClient();
+			const { error } = await supabase.auth.signOut();
+			if (error) {
+				throw error;
+			}
+			window.location.href = "/";
+			{{/if}}
+
+			{{#if (eq auth "none")}}
+			// No auth configured
+			toast.error("Sign out not available");
+			{{/if}}
+		} catch (error) {
+			console.error("Sign out error:", error);
+			toast.error("Failed to sign out");
+		}
+	};
+
+	{{#if (eq auth "none")}}
+	// No auth - don't show user menu
+	return null;
+	{{/if}}
+
+	{{#if (eq auth "betterAuth")}}
+	if (!session?.user) {
+		return null;
+	}
+
+	const user = session.user;
+	const displayName = user.name || user.email || "User";
+	const avatarFallback = displayName
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.toUpperCase()
+		.slice(0, 2);
+	{{/if}}
+
+	{{#if (eq auth "supabaseAuth")}}
+	if (!session?.user) {
+		return null;
+	}
+
+	const user = session.user;
+	const displayName = user.user_metadata?.full_name || user.email || "User";
+	const avatarFallback = displayName
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.toUpperCase()
+		.slice(0, 2);
+	{{/if}}
+
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="ghost" className="relative h-8 w-8 rounded-full">
+					<Avatar className="h-8 w-8">
+						{{#if (eq auth "betterAuth")}}
+						<AvatarImage src={user.image || ""} alt={displayName} />
+						<AvatarFallback>{avatarFallback}</AvatarFallback>
+						{{/if}}
+						{{#if (eq auth "supabaseAuth")}}
+						<AvatarImage src={user.user_metadata?.avatar_url || ""} alt={displayName} />
+						<AvatarFallback>{avatarFallback}</AvatarFallback>
+						{{/if}}
+					</Avatar>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56" align="end" forceMount>
+				<DropdownMenuLabel className="font-normal">
+					<div className="flex flex-col space-y-1">
+						{{#if (eq auth "betterAuth")}}
+						<p className="text-sm font-medium leading-none">{displayName}</p>
+						<p className="text-xs leading-none text-muted-foreground">
+							{user.email}
+						</p>
+						{{/if}}
+						{{#if (eq auth "supabaseAuth")}}
+						<p className="text-sm font-medium leading-none">{displayName}</p>
+						<p className="text-xs leading-none text-muted-foreground">
+							{user.email}
+						</p>
+						{{/if}}
+					</div>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem>
+					<User className="mr-2 h-4 w-4" />
+					<span>Profile</span>
+				</DropdownMenuItem>
+				{{#unless (eq payment "none")}}
+				<DropdownMenuItem onClick={handleBilling}>
+					<CreditCard className="mr-2 h-4 w-4" />
+					<span>Billing</span>
+				</DropdownMenuItem>
+				{{/unless}}
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onClick={handleSignOut}>
+					<LogOut className="mr-2 h-4 w-4" />
+					<span>Sign out</span>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+} 

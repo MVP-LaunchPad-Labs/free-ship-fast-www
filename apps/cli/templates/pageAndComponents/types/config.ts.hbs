@@ -1,0 +1,60 @@
+export type DatabaseProvider = 'prisma'; export type AuthProvider =
+'better-auth';
+{{#unless (eq payment 'none')}}
+	export type PaymentProvider = 'stripe' | 'lemonsqueezy';
+{{/unless}}
+{{#if email}}
+	export type EmailProvider = 'resend' | 'nodemailer' | 'sendgrid';
+{{/if}}
+
+export interface ConfigProps { appName: string; appDescription: string;
+domainName: string; // Service provider selections services: { database:
+DatabaseProvider; auth: AuthProvider;
+{{#unless (eq payment 'none')}}
+	payment: PaymentProvider;
+{{/unless}}
+{{#if email}}
+	email: EmailProvider;
+{{/if}}
+}; // Database configurations database: { prisma: { databaseUrl: string; }; };
+// Auth configurations auth: { loginUrl: string; callbackUrl: string;
+{{#if (eq auth 'betterAuth')}}
+	betterAuth: { secret: string; baseUrl: string; providers: ('google' | 'github'
+	| 'discord')[]; };
+{{/if}}
+};
+
+{{#unless (eq payment 'none')}}
+	// Payment configurations payment: {
+	{{#if (eq payment 'stripe')}}
+		stripe: { publishableKey: string; secretKey: string; webhookSecret: string;
+		plans: { isFeatured?: boolean; priceId: string; name: string; description?:
+		string; price: number; priceAnchor?: number; features: { name: string; }[];
+		}[]; };
+	{{/if}}
+	{{#if (eq payment 'lemonsqueezy')}}
+		lemonsqueezy: { apiKey: string; storeId: string; webhookSecret: string;
+		plans: { isFeatured?: boolean; variantId: string; name: string;
+		description?: string; price: number; priceAnchor?: number; features: { name:
+		string; }[]; }[]; };
+	{{/if}}
+	};
+{{/unless}}
+
+{{#if email}}
+	// Email configurations email: { resend: { apiKey: string; fromNoReply:
+	string; fromAdmin: string; supportEmail: string; forwardRepliesTo: string; };
+	};
+{{/if}}
+
+{{#unless (eq analytics 'none')}}
+	// Analytics configurations analytics?: {
+	{{#if (eq analytics 'umami')}}
+		umami: { websiteId: string; url: string; };
+	{{/if}}
+	{{#if (eq analytics 'posthog')}}
+		posthog: { key: string; host: string; };
+	{{/if}}
+	};
+{{/unless}}
+}

@@ -36,3 +36,11 @@ handlebars.registerHelper(
 	"includes",
 	(array, value) => Array.isArray(array) && array.includes(value),
 );
+
+handlebars.registerHelper("unless", function(this: any, conditional: any, options: any) {
+	if (!conditional) {
+		return options.fn(this);
+	} else {
+		return options.inverse(this);
+	}
+});
