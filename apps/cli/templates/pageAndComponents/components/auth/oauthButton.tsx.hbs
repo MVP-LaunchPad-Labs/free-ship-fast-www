@@ -1,21 +1,21 @@
 'use client'; import { useState } from 'react';
 {{#if (eq auth 'betterAuth')}}
-	import { authClient } from '@/lib/auth-client';
+	import { authClient } from '../../lib/auth-client';
 {{/if}}
 {{#if (eq auth 'supabaseAuth')}}
-	import { createClient } from '@/lib/supabase/client';
+	import { createClient } from '../../lib/supabase/client';
 {{/if}}
-import { Button } from '@/components/ui/button'; import GoogleIcon from
-'@/components/icons/oauth/google'; import GitHubIcon from
-'@/components/icons/oauth/github'; import { toast } from 'sonner'; import config
-from '@/config'; interface OAuthButtonProps { provider: 'google' | 'github';
-children: React.ReactNode; className?: string; variant?: 'default' | 'outline' |
-'ghost' | 'destructive' | 'secondary'; size?: 'default' | 'sm' | 'lg' | 'icon';
-} const providerIcons = { google: GoogleIcon, github: GitHubIcon, }; export
-default function OAuthButton({ provider, children, className, variant =
-'outline', size = 'default', }: OAuthButtonProps) { const [isLoading,
-setIsLoading] = useState(false); const ProviderIcon = providerIcons[provider];
-const handleOAuth = async () => { setIsLoading(true); try {
+import { Button } from '../ui/button'; import GoogleIcon from
+'../icons/oauth/google'; import GitHubIcon from '../icons/oauth/github'; import
+{ toast } from 'sonner'; import config from '../../config'; interface
+OAuthButtonProps { provider: 'google' | 'github'; children: React.ReactNode;
+className?: string; variant?: 'default' | 'outline' | 'ghost' | 'destructive' |
+'secondary'; size?: 'default' | 'sm' | 'lg' | 'icon'; } const providerIcons = {
+google: GoogleIcon, github: GitHubIcon, }; export default function OAuthButton({
+provider, children, className, variant = 'outline', size = 'default', }:
+OAuthButtonProps) { const [isLoading, setIsLoading] = useState(false); const
+ProviderIcon = providerIcons[provider]; const handleOAuth = async () => {
+setIsLoading(true); try {
 {{#if (eq auth 'betterAuth')}}
 	// Better Auth implementation await authClient.signIn.social( { provider,
 	callbackURL: config.auth.callbackUrl, }, { onSuccess: () => {

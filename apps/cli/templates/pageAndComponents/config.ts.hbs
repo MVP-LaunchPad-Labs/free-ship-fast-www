@@ -1,1 +1,66 @@
- 
+import type { ConfigProps } from "./types/config"; const config: ConfigProps = {
+appName: "{{appName}}", appDescription: "{{appDescription}}", domainName: "{{domainName}}",
+// Service provider selections services: { database: "prisma", auth: "{{auth}}",
+{{#unless (eq payment 'none')}}
+	payment: "{{payment}}",
+{{/unless}}
+{{#if email}}
+	email: "{{email}}",
+{{/if}}
+}, // Database configurations database: { prisma: { databaseUrl:
+process.env.DATABASE_URL || "", }, }, // Auth configurations auth: { loginUrl:
+"/sign-in", callbackUrl: "/dashboard",
+{{#if (eq auth 'betterAuth')}}
+	betterAuth: { secret: process.env.BETTER_AUTH_SECRET || "", baseUrl:
+	process.env.BETTER_AUTH_URL || "http://localhost:3000", providers: ["google",
+	"github"], },
+{{/if}}
+{{#if (eq auth 'supabaseAuth')}}
+	supabase: { url: process.env.NEXT_PUBLIC_SUPABASE_URL || "", anonKey:
+	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "", },
+{{/if}}
+},
+
+{{#unless (eq payment 'none')}}
+	// Payment configurations payment: {
+	{{#if (eq payment 'stripe')}}
+		stripe: { publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
+		"", secretKey: process.env.STRIPE_SECRET_KEY || "", webhookSecret:
+		process.env.STRIPE_WEBHOOK_SECRET || "", plans: [ { isFeatured: true,
+		priceId: "price_1234567890", name: "Pro Plan", description: "Perfect for
+		growing businesses", price: 29, priceAnchor: 59, features: [ { name:
+		"Unlimited projects" }, { name: "Priority support" }, { name: "Advanced
+		analytics" }, ], }, ], },
+	{{/if}}
+	{{#if (eq payment 'lemonsqueezy')}}
+		lemonsqueezy: { apiKey: process.env.LEMONSQUEEZY_API_KEY || "", storeId:
+		process.env.LEMONSQUEEZY_STORE_ID || "", webhookSecret:
+		process.env.LEMONSQUEEZY_WEBHOOK_SECRET || "", plans: [ { isFeatured: true,
+		variantId: "123456", name: "Pro Plan", description: "Perfect for growing
+		businesses", price: 29, priceAnchor: 59, features: [ { name: "Unlimited
+		projects" }, { name: "Priority support" }, { name: "Advanced analytics" },
+		], }, ], },
+	{{/if}}
+	},
+{{/unless}}
+
+{{#if email}}
+	// Email configurations email: { resend: { apiKey: process.env.RESEND_API_KEY
+	|| "", fromNoReply: "noreply@{{domainName}}", fromAdmin: "admin@{{domainName}}",
+	supportEmail: "support@{{domainName}}", forwardRepliesTo: "support@{{domainName}}",
+	}, },
+{{/if}}
+
+{{#unless (eq analytics 'none')}}
+	// Analytics configurations analytics: {
+	{{#if (eq analytics 'umami')}}
+		umami: { websiteId: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || "", url:
+		process.env.NEXT_PUBLIC_UMAMI_URL || "", },
+	{{/if}}
+	{{#if (eq analytics 'posthog')}}
+		posthog: { key: process.env.NEXT_PUBLIC_POSTHOG_KEY || "", host:
+		process.env.NEXT_PUBLIC_POSTHOG_HOST || "", },
+	{{/if}}
+	},
+{{/unless}}
+}; export default config;

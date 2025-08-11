@@ -2,43 +2,53 @@
 
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { cn } from "../../lib/utils";
 
-interface GradientButtonProps {
+export interface GradientButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+	variant?: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link";
+	size?: "default" | "sm" | "lg" | "icon";
+	asChild?: boolean;
 	title?: string;
-	onClick?: () => void;
-	className?: string;
 }
 
 /**
- * Gradient button component with shadcn/ui styling
+ * Gradient button component extending shadcn/ui Button
  *
  * Features:
- * - Custom gradient background with shimmer animation
- * - Built on shadcn Button component
- * - Accessible and customizable
- * - Uses tailwind variable colors for consistency
+ * - Beautiful gradient background with hover effects
+ * - All shadcn/ui Button props supported
+ * - Responsive design with proper contrast
+ * - Accessible with focus states
+ * - Smooth animations and transitions
  */
-const GradientButton = ({
-	title = "Gradient Button",
-	onClick = () => {},
-	className,
-}: GradientButtonProps) => {
-	return (
-		<Button
-			onClick={onClick}
-			className={cn(
-				"bg-gradient-to-r from-primary via-primary/80 to-primary bg-size-200 animate-shimmer",
-				"hover:bg-gradient-to-l hover:from-primary hover:via-primary/90 hover:to-primary",
-				"text-primary-foreground shadow-lg",
-				className,
-			)}
-			data-slot="gradient-button"
-		>
-			{title}
-		</Button>
-	);
-};
+const GradientButton = React.forwardRef<HTMLButtonElement, GradientButtonProps>(
+	({ className, variant = "default", size = "default", title, ...props }, ref) => {
+		return (
+			<Button
+				className={cn(
+					// Base gradient styling
+					"bg-gradient-to-r from-primary to-purple-600 text-white border-0",
+					"hover:from-primary/90 hover:to-purple-600/90",
+					"focus:ring-2 focus:ring-primary/20 focus:ring-offset-2",
+					"transition-all duration-200 ease-in-out",
+					"shadow-lg hover:shadow-xl",
+					// Ensure text is always visible
+					"[&>*]:text-white [&>*]:fill-white",
+					className,
+				)}
+				variant={variant}
+				size={size}
+				ref={ref}
+				{...props}
+			>
+				{title || props.children}
+			</Button>
+		);
+	},
+);
+
+GradientButton.displayName = "GradientButton";
 
 export default GradientButton;

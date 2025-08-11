@@ -4,16 +4,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Card, CardContent } from '../ui/card';
 import { toast } from 'sonner';
 {{#if (eq auth "betterAuth")}}
-import { auth } from '@/lib/auth';
+import { auth } from '../../lib/auth';
 {{/if}}
 {{#if (eq auth "supabaseAuth")}}
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '../../lib/supabase/client';
 {{/if}}
 import { Mail, RefreshCw } from 'lucide-react';
 

@@ -10,16 +10,16 @@ import {
 	MessageCircle,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import Header from "@/components/common/Header";
-import Footer from "@/components/common/Footer";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import Header from "../components/common/Header";
+import Footer from "../components/common/Footer";
 {{#if email}}
-import SupportButton from "@/components/common/SupportButton";
+import SupportButton from "../components/common/SupportButton";
 {{/if}}
-import GradientButton from "@/components/common/GradientButton";
+import GradientButton from "../components/common/GradientButton";
 
 interface ErrorPageProps {
 	error: Error & { digest?: string };

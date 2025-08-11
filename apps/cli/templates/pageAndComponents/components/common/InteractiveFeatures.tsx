@@ -5,9 +5,9 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
+import { Card, CardContent } from "../ui/card";
+import { cn } from "../../lib/utils";
 
 interface Feature {
 	title: string;

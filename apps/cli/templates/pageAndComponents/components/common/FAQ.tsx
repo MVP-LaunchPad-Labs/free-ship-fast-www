@@ -1,13 +1,13 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "../ui/accordion";
 
 /**
  * FAQ item interface for type safety

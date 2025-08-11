@@ -1,8 +1,8 @@
 import * as React from "react";
 import Image from "next/image";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 /**
  * Hero-style testimonial component with shadcn/ui styling

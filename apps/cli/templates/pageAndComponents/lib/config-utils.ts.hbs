@@ -1,0 +1,78 @@
+import config from '../config';
+
+{{#if (eq database 'supabase')}}
+	/** * Get Supabase configuration */ export function getSupabaseConfig() {
+	return config.database.supabase; }
+{{/if}}
+
+{{#if (eq database 'postgres')}}
+	/** * Get Postgres configuration */ export function getPostgresConfig() {
+	return config.database.postgres; }
+{{/if}}
+
+{{#if (eq database 'mongodb')}}
+	/** * Get MongoDB configuration */ export function getMongoDBConfig() { return
+	config.database.mongodb; }
+{{/if}}
+
+/** * Get auth configuration */ export function getAuthConfig() { return
+config.auth; }
+
+{{#if (eq auth 'betterAuth')}}
+	/** * Get Better Auth configuration */ export function getBetterAuthConfig() {
+	return config.auth.betterAuth; }
+{{/if}}
+
+{{#if (eq auth 'supabaseAuth')}}
+	/** * Get Supabase Auth configuration */ export function
+	getSupabaseAuthConfig() { return config.auth.supabase; }
+{{/if}}
+
+{{#unless (eq payment 'none')}}
+	/** * Get the current payment configuration based on which payment provider is
+	configured */ export function getPaymentConfig() {
+	{{#if (eq payment 'stripe')}}
+		if (config.payment.stripe?.publishableKey) { return { provider: 'stripe' as
+		const, config: config.payment.stripe }; }
+	{{/if}}
+	{{#if (eq payment 'lemonsqueezy')}}
+		if (config.payment.lemonsqueezy?.apiKey) { return { provider: 'lemonsqueezy'
+		as const, config: config.payment.lemonsqueezy, }; }
+	{{/if}}
+
+	throw new Error('No payment provider configured'); }
+{{/unless}}
+
+{{#if email}}
+	/** * Get email configuration */ export function getEmailConfig() { if
+	(!config.email.resend) { throw new Error('Email configuration for resend not
+	found'); } return { provider: 'resend' as const, config: config.email.resend,
+	}; }
+{{/if}}
+
+{{#unless (eq analytics 'none')}}
+	/** * Get analytics configuration */ export function getAnalyticsConfig() {
+	{{#if (eq analytics 'posthog')}}
+		if (config.analytics.posthog?.key) { return { provider: 'posthog' as const,
+		config: config.analytics.posthog }; }
+	{{/if}}
+	{{#if (eq analytics 'umami')}}
+		if (config.analytics.umami?.websiteId) { return { provider: 'umami' as
+		const, config: config.analytics.umami }; }
+	{{/if}}
+
+	throw new Error('No analytics provider configured'); }
+{{/unless}}
+
+/** * Get database configuration based on selected provider */ export function
+getDatabaseConfig() {
+{{#if (eq database 'postgres')}}
+	return { provider: 'postgres' as const, config: config.database.postgres };
+{{/if}}
+{{#if (eq database 'supabase')}}
+	return { provider: 'supabase' as const, config: config.database.supabase };
+{{/if}}
+{{#if (eq database 'mongodb')}}
+	return { provider: 'mongodb' as const, config: config.database.mongodb };
+{{/if}}
+}

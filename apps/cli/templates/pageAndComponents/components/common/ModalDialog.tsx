@@ -1,15 +1,16 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import { X } from "lucide-react";
 
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogClose,
-} from "@/components/ui/dialog";
+	DialogTrigger,
+} from "../ui/dialog";
 
 interface ModalDialogProps {
 	isModalOpen: boolean;

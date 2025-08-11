@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { Loader2, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 {{#unless (eq payment "none")}}
-import apiClient from '@/lib/api';
-import { getPaymentConfig } from '@/lib/config-utils';
+import apiClient from '../../lib/api';
+import { getPaymentConfig } from '../../lib/config-utils';
 {{/unless}}
-import config from '@/config';
+import config from '../../config';
 
 interface CheckoutButtonProps {
 	planId: string; // priceId for Stripe, variantId for LemonSqueezy
@@ -45,7 +45,7 @@ const CheckoutButton = ({
 
 		try {
 			{{#unless (eq payment "none")}}
-			let url: string;
+			let url: string | undefined;
 
 			{{#if (eq payment "stripe")}}
 			if (provider === 'stripe') {
@@ -94,7 +94,7 @@ const CheckoutButton = ({
 			onClick={handlePayment}
 			disabled={`${isLoading}{{#if (eq payment "none")}} || true{{/if}}`}
 			size='lg'
-			className={`w-full mt-8 gap-2 ${className || ''} {{#if (eq payment "none")}}opacity-50{{/if}}`}
+			className={`w-full mt-8 gap-2 {{#if (eq payment "none")}} opacity-50 {{/if}} ${className || ''}`}
 			data-slot='checkout-button'
 		>
 			{isLoading ? (

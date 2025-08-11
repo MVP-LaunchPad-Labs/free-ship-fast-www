@@ -90,55 +90,7 @@ export async function addEnvVariablesToFile(
 export async function setupEnvironmentVariables(config: ProjectConfig) {
 	const { database, auth, payment, email, projectDir } = config;
 
-	// Setup web client environment variables
-	const clientDir = path.join(projectDir, "apps/web");
-	if (await fs.pathExists(clientDir)) {
-		const clientVars: EnvVariable[] = [
-			{
-				key: "NEXT_PUBLIC_APP_URL",
-				value: "http://localhost:3000",
-				condition: true,
-			},
-			{
-				key: "SITE_URL", 
-				value: "http://localhost:3000",
-				condition: true,
-			},
-			{
-				key: "NEXT_PUBLIC_SUPABASE_URL",
-				value: "https://your-project.supabase.co",
-				condition: database === "supabase",
-			},
-			{
-				key: "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-				value: "your-anon-key",
-				condition: database === "supabase",
-			},
-			{
-				key: "NEXT_PUBLIC_BETTER_AUTH_URL",
-				value: "http://localhost:3000",
-				condition: auth === "betterAuth",
-			},
-			{
-				key: "STRIPE_PUBLISHABLE_KEY",
-				value: "pk_test_xxx",
-				condition: payment === "stripe",
-			},
-			{
-				key: "LEMON_SQUEEZY_STORE_ID",
-				value: "your-store-id",
-				condition: payment === "lemonsqueezy",
-			},
-		];
-		await addEnvVariablesToFile(path.join(clientDir, ".env"), clientVars);
-	}
-
-	// Setup server environment variables
-	const serverDir = path.join(projectDir, "apps/server");
-	if (!(await fs.pathExists(serverDir))) {
-		return;
-	}
-	const envPath = path.join(serverDir, ".env");
+	const envPath = path.join(projectDir, ".env");
 
 	let databaseUrl: string | null = null;
 	switch (database) {
@@ -154,7 +106,18 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 			break;
 	}
 
-	const serverVars: EnvVariable[] = [
+	const envVars: EnvVariable[] = [
+		// App URLs
+		{
+			key: "NEXT_PUBLIC_APP_URL",
+			value: "http://localhost:3000",
+			condition: true,
+		},
+		{
+			key: "SITE_URL",
+			value: "http://localhost:3000",
+			condition: true,
+		},
 		// Better Auth
 		{
 			key: "BETTER_AUTH_SECRET",
@@ -163,6 +126,11 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		},
 		{
 			key: "BETTER_AUTH_URL",
+			value: "http://localhost:3000",
+			condition: auth === "betterAuth",
+		},
+		{
+			key: "NEXT_PUBLIC_BETTER_AUTH_URL",
 			value: "http://localhost:3000",
 			condition: auth === "betterAuth",
 		},
@@ -177,17 +145,6 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 			value: "your-google-client-secret",
 			condition: auth === "betterAuth",
 		},
-		// App URLs
-		{
-			key: "NEXT_PUBLIC_APP_URL",
-			value: "http://localhost:3000",
-			condition: true,
-		},
-		{
-			key: "SITE_URL",
-			value: "http://localhost:3000",
-			condition: true,
-		},
 		// Database
 		{
 			key: "DATABASE_URL",
@@ -200,6 +157,16 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 			condition: database === "mongodb",
 		},
 		{
+			key: "NEXT_PUBLIC_SUPABASE_URL",
+			value: "https://your-project.supabase.co",
+			condition: database === "supabase",
+		},
+		{
+			key: "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+			value: "your-anon-key",
+			condition: database === "supabase",
+		},
+		{
 			key: "SUPABASE_SERVICE_ROLE_KEY",
 			value: "your-service-role-key",
 			condition: database === "supabase",
@@ -208,12 +175,12 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		{
 			key: "RESEND_API_KEY",
 			value: "your-resend-api-key",
-			condition: email,
+			condition: email === true,
 		},
 		{
 			key: "RESEND_FROM_EMAIL",
 			value: "no-reply@yourdomain.com",
-			condition: email,
+			condition: email === true,
 		},
 		// Rate Limiting
 		{
@@ -228,6 +195,11 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		},
 		// Stripe
 		{
+			key: "STRIPE_PUBLISHABLE_KEY",
+			value: "pk_test_xxx",
+			condition: payment === "stripe",
+		},
+		{
 			key: "STRIPE_SECRET_KEY",
 			value: "sk_test_xxx",
 			condition: payment === "stripe",
@@ -238,6 +210,11 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 			condition: payment === "stripe",
 		},
 		// Lemon Squeezy
+		{
+			key: "LEMON_SQUEEZY_STORE_ID",
+			value: "your-store-id",
+			condition: payment === "lemonsqueezy",
+		},
 		{
 			key: "LEMON_SQUEEZY_SECRET_KEY",
 			value: "sk_live_xxx",
@@ -250,5 +227,5 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		},
 	];
 
-	await addEnvVariablesToFile(envPath, serverVars);
+	await addEnvVariablesToFile(envPath, envVars);
 }

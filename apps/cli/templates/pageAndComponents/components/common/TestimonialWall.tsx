@@ -1,11 +1,12 @@
-import type { JSX } from "react";
-import Image from "next/image";
-import { StaticImageData } from "next/image";
+"use client";
 
-import config from "@/config";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import * as React from "react";
+import { useEffect, useState } from "react";
+
+import config from "../../config";
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 // Use this object to add an icon to the testimonial (optional) like the Product Hunt logo for instance.
 // Only change the values if you add more referrings sites (currently Twitter & Product Hunt)
@@ -13,12 +14,12 @@ const refTypes: {
 	productHunt: {
 		id: string;
 		ariaLabel: string;
-		svg: JSX.Element;
+		svg: React.JSX.Element;
 	};
 	twitter: {
 		id: string;
 		ariaLabel: string;
-		svg: JSX.Element;
+		svg: React.JSX.Element;
 	};
 	other: { id: string; ariaLabel?: null; svg?: null };
 } = {
@@ -66,7 +67,7 @@ const list: {
 	type?: {
 		id: string;
 		ariaLabel?: string | null;
-		svg?: JSX.Element | null;
+		svg?: React.JSX.Element | null;
 	};
 	link?: string;
 	img?: string;

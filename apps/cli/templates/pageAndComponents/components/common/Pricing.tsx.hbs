@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Check } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '../ui/badge';
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
-} from '@/components/ui/card';
+} from '../ui/card';
 {{#unless (eq payment "none")}}
 import CheckoutButton from './CheckoutButton';
-import { getPaymentConfig } from '@/lib/config-utils';
+import { getPaymentConfig } from '../../lib/config-utils';
 {{/unless}}
 
 /**

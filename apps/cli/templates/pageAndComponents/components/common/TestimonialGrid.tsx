@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { StaticImageData } from "next/image";
 
-import config from "@/config";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import config from "../../config";
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 // The list of your testimonials. It needs 3 items to fill the row.
 const testimonials = [

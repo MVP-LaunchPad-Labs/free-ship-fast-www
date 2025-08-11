@@ -3,13 +3,13 @@
 import * as React from "react";
 import { LogOut, User, CreditCard } from "lucide-react";
 {{#if (eq auth "betterAuth")}}
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../lib/auth-client";
 {{/if}}
 {{#if (eq auth "supabaseAuth")}}
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "../../lib/supabase/client";
 {{/if}}
 {{#unless (eq payment "none")}}
-import apiClient from "@/lib/api";
+import apiClient from "../../lib/api";
 {{/unless}}
 
 import {
@@ -19,9 +19,9 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
 
 export default function UserAccountMenu() {

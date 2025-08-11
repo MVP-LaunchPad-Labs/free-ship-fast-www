@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Star } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const customers = [
 	{
