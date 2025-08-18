@@ -1,9 +1,9 @@
 import gradient from 'gradient-string';
 
 export const TITLE_TEXT = `
- ╔═╗╦═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗  ╔═╗╔═╗╔═╗╔╦╗
- ╠╣ ╠╦╝║╣ ║╣   ╚═╗╠═╣║╠═╝  ╠╣ ╠═╣╚═╗ ║ 
- ╚  ╩╚═╚═╝╚═╝  ╚═╝╩ ╩╩╩    ╚  ╩ ╩╚═╝ ╩ 
+ ╦  ╔═╗╦ ╦╔╗╔╔═╗╦ ╦  ╔═╗╔═╗╔╦╗
+ ║  ╠═╣║ ║║║║║  ╠═╣  ╠═╝╠═╣ ║║ 
+ ╩═╝╩ ╩╚═╝╝╚╝╚═╝╩ ╩  ╩  ╩ ╩═╩╝
 `;
 
 const darkTheme = {
@@ -26,7 +26,7 @@ export const renderTitle = () => {
 	if (terminalWidth < titleWidth) {
 		const simplifiedTitle = `
     ┌─────────────────────┐
-    │   Free Ship Fast    │
+    │    Launch Pad      │
     └─────────────────────┘
     `;
 		console.log(

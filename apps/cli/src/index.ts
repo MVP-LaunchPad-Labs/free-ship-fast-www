@@ -39,7 +39,6 @@ const router = t.router({
 			])
 		)
 		.mutation(async ({ input }) => {
-			console.log(input);
 			const [projectName, options] = input;
 			const combinedInput = {
 				projectName,

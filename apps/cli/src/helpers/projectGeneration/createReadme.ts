@@ -24,7 +24,7 @@ function generateReadmeContent(options: ProjectConfig): string {
 
 A modern SaaS boilerplate built with Next.js 15, featuring Prisma + Better Auth for a robust development experience.
 
-This project was created with [FreeShipFast](https://github.com/MVP-LaunchPad-Labs/free-ship-fast), a modern SaaS starter template.
+This project was created with [FreeShipFast](https://github.com/MVP-LaunchPad-Labs/launch-pad), a modern SaaS starter template.
 
 ## 🚀 Features
 

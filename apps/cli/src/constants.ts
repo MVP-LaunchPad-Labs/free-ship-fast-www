@@ -8,9 +8,9 @@ const distPath = path.dirname(__filename);
 export const PKG_ROOT = path.join(distPath, '../');
 
 export const DEFAULT_CONFIG: ProjectConfig = {
-	projectName: 'free-ship-fast-app',
-	projectDir: path.resolve(process.cwd(), 'free-ship-fast-app'),
-	relativePath: 'free-ship-fast-app',
+	projectName: 'launch-pad-app',
+	projectDir: path.resolve(process.cwd(), 'launch-pad-app'),
+	relativePath: 'launch-pad-app',
 	email: true,
 	database: 'postgres',
 	auth: 'betterAuth',

@@ -1,19 +1,23 @@
 {
-	"name": "create-free-ship-fast",
-	"version": "1.0.0",
-	"main": "index.js",
-	"description": "Create a free ship fast project",
+	"name": "create-launch-pad-app2",
+	"version": "1.0.186",
+	"description": "Launch your saas faster.",
+	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsdown",
 		"dev": "tsdown --watch",
 		"check-types": "tsc --noEmit"
 	},
+	"files": [
+		"templates",
+		"dist"
+	],
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"bin": {
-		"create-free-ship-fast": "./bin/create-free-ship-fast.js"
+		"create-launch-pad-app2": "dist/index.js"
 	},
 	"devDependencies": {
 		"@types/node": "^24.2.0",
