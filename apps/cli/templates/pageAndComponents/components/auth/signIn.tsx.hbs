@@ -1,92 +1,89 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 {{#unless (eq auth 'none')}}
-	import OAuthButton from "./oauthButton";
-	{{#if (eq auth 'betterAuth')}}
-		import MagicLink from "./MagicLink";
-	{{/if}}
+import OAuthButton from "./oauthButton";
+{{#if (eq auth 'betterAuth')}}
+import MagicLink from "./MagicLink";
+{{/if}}
 {{/unless}}
 
 export default function SignIn() {
-{{#if (eq auth 'none')}}
-	// No authentication - show simple message return (
-	<Card className='w-full max-w-sm mx-auto'>
-		<CardHeader className='text-center'>
-			<CardTitle className='text-xl'>Welcome</CardTitle>
-			<p className='text-sm text-muted-foreground mt-2'>
-				Authentication is not configured for this application
-			</p>
-		</CardHeader>
-		<CardContent className='flex flex-col gap-4'>
-			<div className='text-center text-sm text-muted-foreground'>
-				To enable authentication, configure your auth provider in the project
-				settings.
-			</div>
-		</CardContent>
-	</Card>
-	);
-{{/if}}
-
-{{#unless (eq auth 'none')}}
+	{{#if (eq auth 'none')}}
+	// No authentication - show simple message
 	return (
-	<Card className='w-full max-w-sm mx-auto'>
-		<CardHeader className='text-center'>
-			<CardTitle className='text-xl'>Sign In</CardTitle>
-			<p className='text-sm text-muted-foreground mt-2'>
-				Welcome back! Please sign in to your account
-			</p>
-		</CardHeader>
-		<CardContent className='flex flex-col gap-4'>
-			{{#if (eq auth 'betterAuth')}}
-				<OAuthButton provider='google'>Continue with Google</OAuthButton>
-				<OAuthButton provider='github'>Continue with GitHub</OAuthButton>
+		<Card className="w-full max-w-sm mx-auto">
+			<CardHeader className="text-center">
+				<CardTitle className="text-xl">Welcome</CardTitle>
+				<p className="text-sm text-muted-foreground mt-2">
+					Authentication is not configured for this application
+				</p>
+			</CardHeader>
+			<CardContent className="flex flex-col gap-4">
+				<div className="text-center text-sm text-muted-foreground">
+					To enable authentication, configure your auth provider in the project
+					settings.
+				</div>
+			</CardContent>
+		</Card>
+	);
+	{{/if}}
 
-				<div className='relative'>
-					<div className='absolute inset-0 flex items-center'>
-						<span className='w-full border-t' />
+	{{#unless (eq auth 'none')}}
+	return (
+		<Card className="w-full max-w-sm mx-auto">
+			<CardHeader className="text-center">
+				<CardTitle className="text-xl">Sign In</CardTitle>
+				<p className="text-sm text-muted-foreground mt-2">
+					Welcome back! Please sign in to your account
+				</p>
+			</CardHeader>
+			<CardContent className="flex flex-col gap-4">
+				{{#if (eq auth 'betterAuth')}}
+				<OAuthButton provider="google">Continue with Google</OAuthButton>
+				<OAuthButton provider="github">Continue with GitHub</OAuthButton>
+
+				<div className="relative">
+					<div className="absolute inset-0 flex items-center">
+						<span className="w-full border-t" />
 					</div>
-					<div className='relative flex justify-center text-xs uppercase'>
-						<span
-							className='bg-background px-2 text-muted-foreground border rounded-md py-0.5'
-						>
+					<div className="relative flex justify-center text-xs uppercase">
+						<span className="bg-background px-2 text-muted-foreground border rounded-md py-0.5">
 							or
 						</span>
 					</div>
 				</div>
 
 				<MagicLink />
-			{{/if}}
+				{{/if}}
 
-			{{#if (eq auth 'supabaseAuth')}}
-				<OAuthButton provider='google'>Continue with Google</OAuthButton>
-				<OAuthButton provider='github'>Continue with GitHub</OAuthButton>
+				{{#if (eq auth 'supabaseAuth')}}
+				<OAuthButton provider="google">Continue with Google</OAuthButton>
+				<OAuthButton provider="github">Continue with GitHub</OAuthButton>
 
-				<div className='relative'>
-					<div className='absolute inset-0 flex items-center'>
-						<span className='w-full border-t' />
+				<div className="relative">
+					<div className="absolute inset-0 flex items-center">
+						<span className="w-full border-t" />
 					</div>
-					<div className='relative flex justify-center text-xs uppercase'>
-						<span
-							className='bg-background px-2 text-muted-foreground border rounded-md py-0.5'
-						>
+					<div className="relative flex justify-center text-xs uppercase">
+						<span className="bg-background px-2 text-muted-foreground border rounded-md py-0.5">
 							or
 						</span>
 					</div>
 				</div>
 
 				{/* Supabase has built-in magic link support */}
-				<div className='text-sm text-muted-foreground text-center'>
+				<div className="text-sm text-muted-foreground text-center">
 					Magic link authentication available via Supabase
 				</div>
-			{{/if}}
+				{{/if}}
 
-			<div className='text-center text-sm text-muted-foreground'>
-				Don't have an account?{" "}
-				<a href='/sign-up' className='text-primary hover:underline'>
-					Sign up
-				</a>
-			</div>
-		</CardContent>
-	</Card>
+				<div className="text-center text-sm text-muted-foreground">
+					Don&apos;t have an account?{" "}
+					<a href="/sign-up" className="text-primary hover:underline">
+						Sign up
+					</a>
+				</div>
+			</CardContent>
+		</Card>
 	);
-{{/unless}}
+	{{/unless}}
 }

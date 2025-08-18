@@ -1,6 +1,6 @@
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
-import { hasEnvVars } from '../utils';
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { hasEnvVars } from "../utils";
 
 export async function updateSession(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({
@@ -11,6 +11,8 @@ export async function updateSession(request: NextRequest) {
 	if (!hasEnvVars) {
 		return supabaseResponse;
 	}
+
+	const { pathname } = request.nextUrl;
 
 	const supabase = createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -45,15 +47,26 @@ export async function updateSession(request: NextRequest) {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	if (
-		request.nextUrl.pathname !== '/' &&
-		!user &&
-		!request.nextUrl.pathname.startsWith('/sign-in') &&
-		!request.nextUrl.pathname.startsWith('/sign-up')
-	) {
-		// no user, potentially respond by redirecting the user to the sign-in page
+	const isAuthenticated = !!user;
+
+	// Define route patterns
+	const authRoutes = ["/sign-in", "/sign-up", "/forgot-password"];
+	const publicRoutes = ["/", ...authRoutes];
+	
+	const isAuthRoute = authRoutes.includes(pathname);
+	const isPublicRoute = publicRoutes.includes(pathname);
+
+	// Redirect authenticated users away from auth pages to dashboard
+	if (isAuthenticated && isAuthRoute) {
 		const url = request.nextUrl.clone();
-		url.pathname = '/sign-in';
+		url.pathname = "/dashboard";
+		return NextResponse.redirect(url);
+	}
+
+	// Redirect unauthenticated users from protected routes to sign-in
+	if (!isAuthenticated && !isPublicRoute) {
+		const url = request.nextUrl.clone();
+		url.pathname = "/sign-in";
 		return NextResponse.redirect(url);
 	}
 

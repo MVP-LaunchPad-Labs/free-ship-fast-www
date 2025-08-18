@@ -1,31 +1,63 @@
-import { Ratelimit } from "@upstash/ratelimit"; import redis from "./index"; //
-Create rate limiters for different operations export const globalRateLimit = new
-Ratelimit({ redis, limiter: Ratelimit.slidingWindow(100, "1 h"), analytics:
-true, });
+import { Ratelimit } from "@upstash/ratelimit";
+import redis from "./index";
+
+// Create rate limiters for different operations
+export const globalRateLimit = new Ratelimit({
+	redis,
+	limiter: Ratelimit.slidingWindow(100, "1 h"),
+	analytics: true,
+});
 
 {{#if (eq auth 'betterAuth')}}
-	// Auth-specific rate limiters export const authRateLimiter = new Ratelimit({
-	redis, limiter: Ratelimit.slidingWindow(5, "1 m"), analytics: true, prefix:
-	"auth", }); export const emailTokenRateLimiter = new Ratelimit({ redis,
-	limiter: Ratelimit.slidingWindow(3, "10 m"), analytics: true, prefix:
-	"email_token", }); export const verifyEmailRateLimiter = new Ratelimit({
-	redis, limiter: Ratelimit.slidingWindow(10, "1 h"), analytics: true, prefix:
-	"verify_email", });
+// Auth-specific rate limiters
+export const authRateLimiter = new Ratelimit({
+	redis,
+	limiter: Ratelimit.slidingWindow(5, "1 m"),
+	analytics: true,
+	prefix: "auth",
+});
+
+export const emailTokenRateLimiter = new Ratelimit({
+	redis,
+	limiter: Ratelimit.slidingWindow(3, "10 m"),
+	analytics: true,
+	prefix: "email_token",
+});
+
+export const verifyEmailRateLimiter = new Ratelimit({
+	redis,
+	limiter: Ratelimit.slidingWindow(10, "1 h"),
+	analytics: true,
+	prefix: "verify_email",
+});
 {{/if}}
 
 // Payment rate limiter
 {{#unless (eq payment 'none')}}
-	export const paymentRateLimit = new Ratelimit({ redis, limiter:
-	Ratelimit.slidingWindow(5, "1 m"), analytics: true, prefix: "payment", });
+export const paymentRateLimit = new Ratelimit({
+	redis,
+	limiter: Ratelimit.slidingWindow(5, "1 m"),
+	analytics: true,
+	prefix: "payment",
+});
 {{/unless}}
 
-// Dynamic rate limiter selector export const getDynamicRateLimiter = (type:
-string): Ratelimit => { switch (type) {
-{{#if (eq auth 'betterAuth')}}
-	case "auth": return authRateLimiter; case "email_token": return
-	emailTokenRateLimiter; case "verify_email": return verifyEmailRateLimiter;
-{{/if}}
-{{#unless (eq payment 'none')}}
-	case "payment": return paymentRateLimit;
-{{/unless}}
-default: return globalRateLimit; } };
+// Dynamic rate limiter selector
+export const getDynamicRateLimiter = (type: string): Ratelimit => {
+	switch (type) {
+		{{#if (eq auth 'betterAuth')}}
+		case "auth":
+			return authRateLimiter;
+		case "email_token":
+			return emailTokenRateLimiter;
+		case "verify_email":
+			return verifyEmailRateLimiter;
+		{{/if}}
+		{{#unless (eq payment 'none')}}
+		case "payment":
+			return paymentRateLimit;
+		{{/unless}}
+		default:
+			return globalRateLimit;
+	}
+};

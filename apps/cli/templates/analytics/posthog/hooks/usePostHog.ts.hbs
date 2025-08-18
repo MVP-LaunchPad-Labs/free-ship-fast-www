@@ -1,5 +1,5 @@
-import { usePostHog } from 'posthog-js/react';
-import { useEffect } from 'react';
+import { usePostHog } from "posthog-js/react";
+import { useEffect } from "react";
 
 // Hook for easy PostHog usage in components
 export function useAnalytics() {
@@ -48,7 +48,7 @@ export function usePageTracking() {
 	const { track } = useAnalytics();
 
 	useEffect(() => {
-		track('$pageview');
+		track("$pageview");
 	}, [track]);
 }
 
@@ -77,4 +77,4 @@ export function useABTest(testName: string, variants: string[], defaultVariant?:
 		variant: activeVariant,
 		isVariant: (variantName: string) => activeVariant === variantName,
 	};
-} 
+}

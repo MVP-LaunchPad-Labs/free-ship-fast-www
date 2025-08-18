@@ -1,25 +1,25 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
+import { NextResponse, type NextRequest } from "next/server";
+import { headers } from "next/headers";
+import Stripe from "stripe";
 import {
 	retrieveCheckoutSession,
 	verifyWebhookSignature,
-} from '@/lib/stripe/utils';
+} from "@/lib/stripe/utils";
 
 {{#if (eq database "supabase")}}
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from "@/lib/supabase/server";
 {{else if (eq database "prisma")}}
-import { PrismaClient } from '@/prisma/generated/prisma';
+import { PrismaClient } from "@/prisma/generated/prisma";
 {{else if (eq database "mongoose")}}
-import mongoose from 'mongoose';
-import { User } from '@/lib/db/models/User';
+import mongoose from "mongoose";
+import { User } from "@/lib/db/models/User";
 {{else}}
-import { mongo } from '@/lib/db/mongodb/client';
-import { ObjectId } from 'mongodb';
+import { mongo } from "@/lib/db/mongodb/client";
+import { ObjectId } from "mongodb";
 {{/if}}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-	apiVersion: '2025-06-30.basil',
+	apiVersion: "2025-06-30.basil",
 	typescript: true,
 });
 
@@ -50,23 +50,23 @@ const userDatabase: UserDatabase = {
 	async updateUser(userId: string, data) {
 		const supabase = await createClient();
 		await supabase
-			.from('profiles')
+			.from("profiles")
 			.update(data)
-			.eq('id', userId);
+			.eq("id", userId);
 	},
 	async updateUsersByCustomerId(customerId: string, data) {
 		const supabase = await createClient();
 		await supabase
-			.from('profiles')
+			.from("profiles")
 			.update(data)
-			.eq('customer_id', customerId);
+			.eq("customer_id", customerId);
 	},
 	async findUserByCustomerId(customerId: string) {
 		const supabase = await createClient();
 		const { data: user } = await supabase
-			.from('profiles')
-			.select('id, price_id')
-			.eq('customer_id', customerId)
+			.from("profiles")
+			.select("id, price_id")
+			.eq("customer_id", customerId)
 			.single();
 		return user ? { id: user.id, price_id: user.price_id || undefined } : null;
 	},
@@ -114,7 +114,7 @@ const userDatabase: UserDatabase = {
 			await mongoose.connect(process.env.MONGODB_URI as string);
 		}
 		const user = await User.findOne({ customer_id: customerId })
-			.select('_id price_id')
+			.select("_id price_id")
 			.lean();
 		return user ? { id: user._id.toString(), price_id: user.price_id || undefined } : null;
 	},
@@ -124,21 +124,21 @@ const userDatabase: UserDatabase = {
 const userDatabase: UserDatabase = {
 	async updateUser(userId: string, data) {
 		const db = mongo.db(process.env.MONGODB_DATABASE);
-		await db.collection('users').updateOne(
+		await db.collection("users").updateOne(
 			{ _id: new ObjectId(userId) },
 			{ $set: data }
 		);
 	},
 	async updateUsersByCustomerId(customerId: string, data) {
 		const db = mongo.db(process.env.MONGODB_DATABASE);
-		await db.collection('users').updateMany(
+		await db.collection("users").updateMany(
 			{ customer_id: customerId },
 			{ $set: data }
 		);
 	},
 	async findUserByCustomerId(customerId: string) {
 		const db = mongo.db(process.env.MONGODB_DATABASE);
-		const user = await db.collection('users').findOne(
+		const user = await db.collection("users").findOne(
 			{ customer_id: customerId },
 			{ projection: { _id: 1, price_id: 1 } }
 		);
@@ -191,24 +191,24 @@ const handleInvoicePaid = async (event: Stripe.Event) => {
 
 const webhookHandlers: Record<string, (event: Stripe.Event) => Promise<void>> =
 	{
-		'checkout.session.completed': handleCheckoutCompleted,
-		'customer.subscription.deleted': handleSubscriptionDeleted,
-		'invoice.paid': handleInvoicePaid,
+		"checkout.session.completed": handleCheckoutCompleted,
+		"customer.subscription.deleted": handleSubscriptionDeleted,
+		"invoice.paid": handleInvoicePaid,
 		// Acknowledge but don't process these events
-		'checkout.session.expired': async () => {},
-		'customer.subscription.updated': async () => {},
-		'invoice.payment_failed': async () => {},
+		"checkout.session.expired": async () => {},
+		"customer.subscription.updated": async () => {},
+		"invoice.payment_failed": async () => {},
 	};
 
 export async function POST(req: NextRequest) {
 	try {
 		const rawPayload = await req.text();
 		const headersList = await headers();
-		const webhookSignature = headersList.get('stripe-signature');
+		const webhookSignature = headersList.get("stripe-signature");
 
 		if (!webhookSignature) {
 			return NextResponse.json(
-				{ error: 'Missing stripe signature' },
+				{ error: "Missing stripe signature" },
 				{ status: 400 }
 			);
 		}
@@ -222,7 +222,7 @@ export async function POST(req: NextRequest) {
 
 		if (!webhookEvent) {
 			return NextResponse.json(
-				{ error: 'Invalid webhook signature' },
+				{ error: "Invalid webhook signature" },
 				{ status: 400 }
 			);
 		}

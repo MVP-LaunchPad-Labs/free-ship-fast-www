@@ -60,9 +60,21 @@ const verificationSchema = new Schema(
     { collection: 'verification' }
 );
 
+const waitlistSchema = new Schema(
+    {
+        _id: { type: String },
+        email: { type: String, required: true, unique: true },
+        createdAt: { type: Date, required: true, default: Date.now },
+        ip: { type: String },
+        userAgent: { type: String },
+    },
+    { collection: 'waitlist' }
+);
+
 const User = model('User', userSchema);
 const Session = model('Session', sessionSchema);
 const Account = model('Account', accountSchema);
 const Verification = model('Verification', verificationSchema);
+const Waitlist = model('Waitlist', waitlistSchema);
 
-export { User, Session, Account, Verification };
+export { User, Session, Account, Verification, Waitlist };

@@ -1,13 +1,14 @@
 {
 	"name": "create-launch-pad-app2",
-	"version": "1.0.186",
+	"version": "1.0.19",
 	"description": "Launch your saas faster.",
 	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsdown",
 		"dev": "tsdown --watch",
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"prepublishOnly": "npm run build"
 	},
 	"files": [
 		"templates",
@@ -20,6 +21,7 @@
 		"create-launch-pad-app2": "dist/index.js"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "2.2.0",
 		"@types/node": "^24.2.0",
 		"tsdown": "^0.13.4",
 		"typescript": "^5.9.2"

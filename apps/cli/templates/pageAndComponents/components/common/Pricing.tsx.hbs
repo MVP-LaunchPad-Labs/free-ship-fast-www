@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { Check } from 'lucide-react';
+import * as React from "react";
+import { Check } from "lucide-react";
 
-import { Badge } from '../ui/badge';
+import { Badge } from "../ui/badge";
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
-} from '../ui/card';
+} from "../ui/card";
 {{#unless (eq payment "none")}}
-import CheckoutButton from './CheckoutButton';
-import { getPaymentConfig } from '../../lib/config-utils';
+import CheckoutButton from "./CheckoutButton";
+import { getPaymentConfig } from "../../lib/config-utils";
 {{/unless}}
 
 /**
@@ -44,14 +44,14 @@ const Pricing = () => {
 
 	return (
 		<section
-			className='bg-muted/30 overflow-hidden'
-			id='pricing'
-			aria-labelledby='pricing-heading'
-			data-slot='pricing-section'
+			className="bg-muted/30 overflow-hidden"
+			id="pricing"
+			aria-labelledby="pricing-heading"
+			data-slot="pricing-section"
 		>
-			<div className='py-24 px-8 max-w-5xl mx-auto'>
-				<div className='flex flex-col text-center w-full mb-20'>
-					<h2 className='text-3xl md:text-4xl font-extrabold tracking-tight text-center text-foreground'>
+			<div className="py-24 px-8 max-w-5xl mx-auto">
+				<div className="flex flex-col text-center w-full mb-20">
+					<h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center text-foreground">
 						{{#if (eq payment "none")}}
 						Simple pricing for everyone
 						{{/if}}
@@ -62,9 +62,9 @@ const Pricing = () => {
 				</div>
 
 				<div
-					className='relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8'
-					role='list'
-					aria-label='Pricing plans'
+					className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8"
+					role="list"
+					aria-label="Pricing plans"
 				>
 					{{#if (eq payment "none")}}
 					{mockPlans.map((plan, index) => (

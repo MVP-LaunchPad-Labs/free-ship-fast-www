@@ -3,7 +3,7 @@ import {
 	createCheckout,
 	getCustomer,
 	lemonSqueezySetup,
-} from '@lemonsqueezy/lemonsqueezy.js';
+} from "@lemonsqueezy/lemonsqueezy.js";
 
 /**
  * Create a LemonSqueezy checkout session
@@ -48,13 +48,13 @@ export const createCheckoutSession = async ({
 		);
 
 		if (error) {
-			console.error('LemonSqueezy checkout failed:', error);
+			console.error("LemonSqueezy checkout failed:", error);
 			return null;
 		}
 
 		return data?.data?.attributes?.url || null;
 	} catch (error) {
-		console.error('LemonSqueezy error:', error);
+		console.error("LemonSqueezy error:", error);
 		return null;
 	}
 };
@@ -74,13 +74,13 @@ export const createCustomerPortalSession = async (
 		const { data, error } = await getCustomer(customerId);
 
 		if (error) {
-			console.error('Customer portal failed:', error);
+			console.error("Customer portal failed:", error);
 			return null;
 		}
 
 		return data?.data?.attributes?.urls?.customer_portal || null;
 	} catch (error) {
-		console.error('Customer portal error:', error);
+		console.error("Customer portal error:", error);
 		return null;
 	}
 };
@@ -100,17 +100,17 @@ export const verifyWebhookSignature = (
 
 	if (!webhookSecret) {
 		console.error(
-			'LEMONSQUEEZY_WEBHOOK_SECRET environment variable is required'
+			"LEMONSQUEEZY_WEBHOOK_SECRET environment variable is required"
 		);
 		return false;
 	}
 
 	// LemonSqueezy uses HMAC-SHA256 for webhook signatures
-	const crypto = require('crypto');
+	const crypto = require("crypto");
 	const computedSignature = crypto
-		.createHmac('sha256', webhookSecret)
+		.createHmac("sha256", webhookSecret)
 		.update(rawPayload)
-		.digest('hex');
+		.digest("hex");
 
 	return crypto.timingSafeEqual(
 		Buffer.from(webhookSignature),

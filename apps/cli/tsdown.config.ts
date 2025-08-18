@@ -5,7 +5,7 @@ export default defineConfig({
 	format: ["esm"],
 	clean: true,
 	shims: true,
-	outDir: "dist",
+	outDir: "dist",	
 	outputOptions: {
 		banner: "#!/usr/bin/env node",
 	},

@@ -6,6 +6,7 @@ import pc from "picocolors";
 import type { ProjectConfig } from "../../types";
 import { addPackageDependency } from "../../utils/addPackageDeps";
 import { setupDbTemplates } from "../projectGeneration/templateManager";
+
 export async function setupDatabase(config: ProjectConfig) {
 	const { database , projectDir } = config;
 
@@ -19,6 +20,18 @@ export async function setupDatabase(config: ProjectConfig) {
 				devDependencies: ["prisma"],
 				projectDir: projectDir,
 			});
+
+			// Add prisma schema config to package.json
+			const pkgJsonPath = path.join(projectDir, "package.json");
+			const pkgJson = await fs.readJson(pkgJsonPath);
+			
+			if (!pkgJson.prisma) {
+				pkgJson.prisma = {
+					schema: "./prisma/schema"
+				};
+			}
+			
+			await fs.writeJson(pkgJsonPath, pkgJson, { spaces: 2 });
 		} else if (database === "supabase") {
 			await addPackageDependency({
 				dependencies: ["@supabase/ssr"],
