@@ -6,20 +6,33 @@ const config: ConfigProps = {
 	domainName: "{{domainName}}",
 	// Service provider selections
 	services: {
-		database: "prisma",
+		database: "{{database}}",
 		auth: "{{auth}}",
 		{{#unless (eq payment 'none')}}
 		payment: "{{payment}}",
 		{{/unless}}
 		{{#if email}}
-		email: "{{email}}",
+		email: "resend",
 		{{/if}}
 	},
 	// Database configurations
 	database: {
-		prisma: {
+		{{#if (eq database 'postgres')}}
+		postgres: {
 			databaseUrl: process.env.DATABASE_URL || "",
 		},
+		{{/if}}
+		{{#if (eq database 'supabase')}}
+		supabase: {
+			url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+			anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+		},
+		{{/if}}
+		{{#if (eq database 'mongodb')}}
+		mongodb: {
+			uri: process.env.MONGODB_URI || "",
+		},
+		{{/if}}
 	},
 	// Auth configurations
 	auth: {
@@ -67,9 +80,9 @@ const config: ConfigProps = {
 		{{/if}}
 		{{#if (eq payment 'lemonsqueezy')}}
 		lemonsqueezy: {
-			apiKey: process.env.LEMONSQUEEZY_API_KEY || "",
-			storeId: process.env.LEMONSQUEEZY_STORE_ID || "",
-			webhookSecret: process.env.LEMONSQUEEZY_WEBHOOK_SECRET || "",
+			apiKey: process.env.LEMON_SQUEEZY_API_KEY || "",
+			storeId: process.env.LEMON_SQUEEZY_STORE_ID || "",
+			webhookSecret: process.env.LEMON_SQUEEZY_WEBHOOK_SECRET || "",
 			plans: [
 				{
 					isFeatured: true,

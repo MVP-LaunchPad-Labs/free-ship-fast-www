@@ -1,11 +1,14 @@
-export type DatabaseProvider = "prisma";
-export type AuthProvider = "better-auth";
+export type DatabaseProvider = "postgres" | "supabase" | "mongodb";
+export type AuthProvider = "betterAuth" | "supabaseAuth";
 {{#unless (eq payment 'none')}}
 export type PaymentProvider = "stripe" | "lemonsqueezy";
 {{/unless}}
 {{#if email}}
 export type EmailProvider = "resend" | "nodemailer" | "sendgrid";
 {{/if}}
+{{#unless (eq analytics 'none')}}
+export type AnalyticsProvider = "umami" | "posthog";
+{{/unless}}
 
 export interface ConfigProps {
 	appName: string;
@@ -24,9 +27,22 @@ export interface ConfigProps {
 	};
 	// Database configurations
 	database: {
-		prisma: {
+		{{#if (eq database 'postgres')}}
+		postgres: {
 			databaseUrl: string;
 		};
+		{{/if}}
+		{{#if (eq database 'supabase')}}
+		supabase: {
+			url: string;
+			anonKey: string;
+		};
+		{{/if}}
+		{{#if (eq database 'mongodb')}}
+		mongodb: {
+			uri: string;
+		};
+		{{/if}}
 	};
 	// Auth configurations
 	auth: {
@@ -37,6 +53,12 @@ export interface ConfigProps {
 			secret: string;
 			baseUrl: string;
 			providers: ("google" | "github" | "discord")[];
+		};
+		{{/if}}
+		{{#if (eq auth 'supabaseAuth')}}
+		supabase: {
+			url: string;
+			anonKey: string;
 		};
 		{{/if}}
 	};

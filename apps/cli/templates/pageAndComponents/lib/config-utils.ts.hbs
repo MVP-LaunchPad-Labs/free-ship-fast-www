@@ -1,26 +1,26 @@
 import config from "../config";
 
-{{#if (eq database 'supabase')}}
-/**
- * Get Supabase configuration
- */
-export function getSupabaseConfig() {
-	return config.database.supabase;
-}
-{{/if}}
-
 {{#if (eq database 'postgres')}}
 /**
- * Get Postgres configuration
+ * Get Postgres database configuration
  */
 export function getPostgresConfig() {
 	return config.database.postgres;
 }
 {{/if}}
 
+{{#if (eq database 'supabase')}}
+/**
+ * Get Supabase database configuration
+ */
+export function getSupabaseConfig() {
+	return config.database.supabase;
+}
+{{/if}}
+
 {{#if (eq database 'mongodb')}}
 /**
- * Get MongoDB configuration
+ * Get MongoDB database configuration
  */
 export function getMongoDBConfig() {
 	return config.database.mongodb;
@@ -76,6 +76,28 @@ export function getPaymentConfig() {
 
 	throw new Error("No payment provider configured");
 }
+
+/**
+ * Get payment configuration for client-side use (without sensitive data)
+ */
+export function getPaymentConfigClient() {
+	{{#if (eq payment 'stripe')}}
+	if (config.payment.stripe) {
+		return {
+			provider: "stripe" as const,
+		};
+	}
+	{{/if}}
+	{{#if (eq payment 'lemonsqueezy')}}
+	if (config.payment.lemonsqueezy) {
+		return {
+			provider: "lemonsqueezy" as const,
+		};
+	}
+	{{/if}}
+
+	throw new Error("No payment provider configured");
+}
 {{/unless}}
 
 {{#if email}}
@@ -91,6 +113,19 @@ export function getEmailConfig() {
 		config: config.email.resend,
 	};
 }
+
+/**
+ * Get email configuration for client-side use (without sensitive data)
+ */
+export function getEmailConfigClient() {
+	if (config.email.resend) {
+		return {
+			provider: "resend" as const,
+		};
+	}
+
+	throw new Error("No email provider configured");
+}
 {{/if}}
 
 {{#unless (eq analytics 'none')}}
@@ -99,7 +134,7 @@ export function getEmailConfig() {
  */
 export function getAnalyticsConfig() {
 	{{#if (eq analytics 'posthog')}}
-	if (config.analytics.posthog?.key) {
+	if (config.analytics?.posthog?.key) {
 		return {
 			provider: "posthog" as const,
 			config: config.analytics.posthog,
@@ -107,10 +142,32 @@ export function getAnalyticsConfig() {
 	}
 	{{/if}}
 	{{#if (eq analytics 'umami')}}
-	if (config.analytics.umami?.websiteId) {
+	if (config.analytics?.umami?.websiteId) {
 		return {
 			provider: "umami" as const,
 			config: config.analytics.umami,
+		};
+	}
+	{{/if}}
+
+	throw new Error("No analytics provider configured");
+}
+
+/**
+ * Get analytics configuration for client-side use (without sensitive data)
+ */
+export function getAnalyticsConfigClient() {
+	{{#if (eq analytics 'posthog')}}
+	if (config.analytics?.posthog) {
+		return {
+			provider: "posthog" as const,
+		};
+	}
+	{{/if}}
+	{{#if (eq analytics 'umami')}}
+	if (config.analytics?.umami) {
+		return {
+			provider: "umami" as const,
 		};
 	}
 	{{/if}}
@@ -139,6 +196,43 @@ export function getDatabaseConfig() {
 	return {
 		provider: "mongodb" as const,
 		config: config.database.mongodb,
+	};
+	{{/if}}
+}
+
+/**
+ * Get database configuration for client-side use (without sensitive data)
+ */
+export function getDatabaseConfigClient() {
+	{{#if (eq database 'postgres')}}
+	return {
+		provider: "postgres" as const,
+	};
+	{{/if}}
+	{{#if (eq database 'supabase')}}
+	return {
+		provider: "supabase" as const,
+	};
+	{{/if}}
+	{{#if (eq database 'mongodb')}}
+	return {
+		provider: "mongodb" as const,
+	};
+	{{/if}}
+}
+
+/**
+ * Get auth configuration for client-side use (without sensitive data)
+ */
+export function getAuthConfigClient() {
+	{{#if (eq auth 'betterAuth')}}
+	return {
+		provider: "betterAuth" as const,
+	};
+	{{/if}}
+	{{#if (eq auth 'supabaseAuth')}}
+	return {
+		provider: "supabaseAuth" as const,
 	};
 	{{/if}}
 }

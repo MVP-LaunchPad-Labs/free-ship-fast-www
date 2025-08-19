@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 {{#unless (eq payment "none")}}
 import apiClient from "../../lib/api";
-import { getPaymentConfig } from "../../lib/config-utils";
+import { getPaymentConfigClient } from "../../lib/config-utils";
 {{/unless}}
 import config from "../../config";
 
@@ -30,7 +30,7 @@ const CheckoutButton = ({
 }: CheckoutButtonProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 	{{#unless (eq payment "none")}}
-	const { provider } = getPaymentConfig();
+	const { provider } = getPaymentConfigClient();
 	{{/unless}}
 
 	const handlePayment = async () => {

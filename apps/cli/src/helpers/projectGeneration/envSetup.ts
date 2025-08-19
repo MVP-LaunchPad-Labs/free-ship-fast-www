@@ -211,6 +211,11 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		},
 		// Lemon Squeezy
 		{
+			key: "LEMON_SQUEEZY_API_KEY",
+			value: "your-api-key",
+			condition: payment === "lemonsqueezy",
+		},
+		{
 			key: "LEMON_SQUEEZY_STORE_ID",
 			value: "your-store-id",
 			condition: payment === "lemonsqueezy",

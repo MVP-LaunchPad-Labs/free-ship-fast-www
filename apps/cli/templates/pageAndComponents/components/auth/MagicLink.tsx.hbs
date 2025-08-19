@@ -9,13 +9,13 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent } from '../ui/card';
 import { toast } from 'sonner';
+import { Mail, RefreshCw } from 'lucide-react';
 {{#if (eq auth "betterAuth")}}
-import { auth } from '../../lib/auth';
+import { authClient } from '../../lib/auth-client';
 {{/if}}
 {{#if (eq auth "supabaseAuth")}}
 import { createClient } from '../../lib/supabase/client';
 {{/if}}
-import { Mail, RefreshCw } from 'lucide-react';
 
 const emailSchema = z.object({
 	email: z.string().email('Please enter a valid email address'),
@@ -45,15 +45,16 @@ const handleError = (error: unknown) => {
 {{#if (eq auth "betterAuth")}}
 // Send magic link using Better Auth
 const sendMagicLink = async (email: string, redirectUrl: string) => {
-	await auth.api.signInMagicLink({
-		body: {
-			email: email,
-			callbackURL: redirectUrl,
-		},
-		headers: {
-			'Content-Type': 'application/json',
-		},
+	const { data, error } = await authClient.signIn.magicLink({
+		email: email,
+		callbackURL: redirectUrl,
 	});
+	
+	if (error) {
+		throw new Error(error.message);
+	}
+	
+	return data;
 };
 {{/if}}
 

@@ -1,6 +1,6 @@
 {
 	"name": "create-launch-pad-app2",
-	"version": "1.0.19",
+	"version": "1.0.21",
 	"description": "Launch your saas faster.",
 	"type": "module",
 	"scripts": {
