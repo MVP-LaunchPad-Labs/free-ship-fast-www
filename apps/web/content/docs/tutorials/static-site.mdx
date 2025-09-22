@@ -1,0 +1,116 @@
+---
+title: Build a Static SEO Page
+description: Create a beautiful, SEO-optimized static landing page in minutes with Free Ship Fast.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	This guide shows you how to build a static, SEO-optimized landing page using
+	Free Ship Fast’s built-in components.
+</Callout>
+
+## Prerequisites
+
+If you haven’t already, clone the repo and get the server running. See the [Get Started tutorial](/docs/get-started).
+
+## Build Your Static Page
+
+<Steps>
+<Step>
+### 1. Create your landing page file
+
+Add a new file at `/app/landing.tsx` and paste in this starter code:
+
+<CodeBlock title="/app/landing.tsx" lang="typescript">
+```typescript
+import { getSEOTags } from '@/libs/seo';
+
+export const metadata = getSEOTags({ canonicalUrlRelative: '/' });
+
+export default function Landing() {
+  return (
+    <main className="min-h-screen p-12 pb-24 text-center" data-theme="dark">
+      <section className="max-w-xl mx-auto space-y-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold">
+          Free Ship Fast: Launch your product in minutes 🚀
+        </h1>
+
+        <p className="text-lg leading-relaxed text-base-content/80">
+          Collect emails, validate your idea, and start building your audience. All with a single deploy.
+        </p>
+
+        <img
+          src="https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=800&q=80"
+          alt="Startup launch"
+          width={500}
+          height={250}
+          className="rounded-lg mx-auto"
+        />
+
+        <button className="btn btn-primary btn-wide">Get started</button>
+      </section>
+    </main>
+
+);
+}
+
+````
+</CodeBlock>
+</Step>
+
+<Step>
+### 2. Customize your content
+
+Edit the headline, description, image, and button to match your brand and offer.
+
+<Callout type="success">
+  You now have a beautiful, SEO-optimized static page—make it yours!
+</Callout>
+</Step>
+
+<Step>
+### 3. Set up SEO
+
+Open `/libs/seo.ts` and update the tags to match your product and keywords.
+
+<Callout type="info">
+  Good SEO means more traffic. Don’t skip this!
+</Callout>
+</Step>
+
+<Step>
+### 4. Explore more components
+
+Want to add pricing, FAQ, or testimonials?
+Check out the [components library](/docs/components) for ready-to-use blocks.
+
+</Step>
+
+<Step>
+### 5. Preview your page
+
+Run your app locally:
+
+```sh
+npm run dev
+````
+
+Visit [http://localhost:3000/landing](http://localhost:3000/landing) to see your new static page.
+
+</Step>
+
+<Step>
+### 6. Next steps
+
+- Replace the example content with your own
+- Test on mobile and desktop
+- Add analytics or a waitlist form if you want
+
+<Callout type='tip'>
+  Want to collect emails? See the [waitlist guide](/docs/tutorials/ship-in-5-minutes).
+</Callout>
+</Step>
+</Steps>

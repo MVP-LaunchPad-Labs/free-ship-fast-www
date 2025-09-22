@@ -1,0 +1,101 @@
+---
+title: Rate Limiting (Magic Links)
+description: Prevent abuse of magic link emails in Free Ship Fast.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	Rate limiting prevents users from abusing magic link authentication. Choose
+	your stack below for setup.
+</Callout>
+
+<Tabs groupId="magic-link-rate-limit" items={["Better Auth + Resend", "Supabase"]} persist defaultIndex={0}>
+  <Tab value="Better Auth + Resend">
+    <Steps>
+      <Step>
+        ### 1. Add Upstash Redis
+
+        Install dependencies:
+
+        <CodeBlock title="Terminal" lang="sh">
+
+```sh
+npm install @upstash/redis @upstash/ratelimit
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 2. Set up rate limiting
+
+        <CodeBlock title="lib/redis/ratelimit.ts" lang="typescript">
+
+```typescript
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+export const emailTokenRateLimiter = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(3, '30 m'),
+	analytics: true,
+});
+
+export async function rateLimitEmail(identifier: string) {
+	const { success } = await emailTokenRateLimiter.limit(identifier);
+	if (!success) {
+		throw new Error('Too many requests. Please try again later.');
+	}
+}
+```
+
+        </CodeBlock>
+      </Step>
+      <Step>
+        ### 3. Use in your magic link email function
+
+        <CodeBlock title="lib/email/sendEmail.ts" lang="typescript">
+
+```typescript
+import { rateLimitEmail } from '../redis/ratelimit';
+import resend from '.';
+
+export async function sendMagicLinkEmail(
+	email: string,
+	url: string,
+	user: { name?: string; email: string }
+) {
+	await rateLimitEmail(email);
+	// ...send email with Resend
+}
+```
+
+        </CodeBlock>
+        <Callout type="tip">
+          Adjust the rate limit as needed for your app.
+        </Callout>
+      </Step>
+    </Steps>
+
+  </Tab>
+  <Tab value="Supabase">
+    <Steps>
+      <Step>
+        ### 1. Supabase rate limits magic link emails by default
+
+        - Without custom SMTP, Supabase allows up to 3 emails per hour.
+        - In production, set up custom SMTP for more control.
+        - You can then configure the rate limit for your custom SMTP provider in the Supabase dashboard.
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>
+
+<Callout type='success'>
+	Rate limiting is essential for security and reliability. Always limit
+	sensitive actions like magic link emails.
+</Callout>{' '}

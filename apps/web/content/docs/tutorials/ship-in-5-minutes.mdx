@@ -1,0 +1,135 @@
+---
+title: Build Your Landing Page
+description: Get your startup in front of customers in 5 minutes with a beautiful landing page and waitlist forms
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	**Complete this quickstart and you could be featured on our homepage! ⭐️**
+</Callout>
+
+## Prerequisites
+
+If you haven’t already, clone the repo and get the server running. See the [Get Started tutorial](/docs/get-started).
+
+## Build Your Landing Page
+
+<Steps>
+<Step>
+### 1. Scaffold your main page
+
+Wipe out everything in `/app/page.tsx` and drop in this starter code:
+
+<CodeBlock title="/app/page.tsx" lang="typescript">
+```typescript
+import { Suspense } from 'react'
+import Header from "@/components/common/Header";
+import Hero from "@/components/common/Hero";
+import Problem from "@/components/common/Problem";
+import FeaturesAccordion from "@/components/common/FeaturesAccordion";
+import Pricing from "@/components/common/Pricing";
+import FAQ from "@/components/common/FAQ";
+import CTA from "@/components/common/CTA";
+import Footer from "@/components/common/Footer";
+
+export default function Home() {
+  return (
+    <>
+      <Suspense>
+        <Header />
+      </Suspense>
+      <main>
+        <Hero />
+        <Problem />
+        <FeaturesAccordion />
+        <Pricing />
+        <FAQ />
+        <CTA />
+      </main>
+      <Footer />
+    </>
+  );
+}
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 2. Make it yours
+
+Edit the text and content to fit your product.  
+Every component is designed to help you write copy that sells—see the [components section](/docs/components) for inspiration.
+
+<Callout type="success">
+  You’ve got a beautiful landing page—now make it your own!
+</Callout>
+</Step>
+
+<Step>
+### 3. Collect emails (optional)
+
+Want a waitlist? Set up your DB, then uncomment the code in `/api/lead/route.ts` to save emails.
+
+</Step>
+
+<Step>
+### 4. Add waitlist buttons (optional)
+
+Swap out the main CTA buttons in `Hero`, `Pricing`, and `CTA` for the waitlist button:
+
+<CodeBlock title="Hero.tsx" lang="typescript">
+```typescript
+import ButtonLead from "@/components/ButtonLead";
+
+// ...inside your component
+
+{/* For Hero & CTA: */}
+
+<ButtonLead />
+
+{/* For Pricing: */}
+
+<ButtonLead extraStyle="!max-w-none !w-full" />
+```
+</CodeBlock>
+</Step>
+
+<Step>
+### 5. Go live locally
+
+Fire up your app:
+
+```sh
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to see your landing page.
+
+<Callout type="info">
+Node 18.17+ required (`node -v` to check)
+</Callout>
+</Step>
+
+<Step>
+### 6. Deploy to the world
+
+Ready to launch? [Follow our deployment guide](/docs/deployment) to go live.
+
+</Step>
+</Steps>
+
+## What’s Next?
+
+- Polish your copy and visuals
+- Add analytics to measure signups
+- Try A/B testing your headline or CTA
+- Connect payments to start selling
+
+<Callout type='tip'>
+	Need help with copy? Check out our [writing guide](/docs/copywriting) for
+	proven tips.
+</Callout>

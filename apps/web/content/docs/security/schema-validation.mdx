@@ -1,0 +1,58 @@
+---
+title: Schema Validation (Zod)
+description: Validate API input in Free Ship Fast using Zod.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { CodeBlock } from 'fumadocs-ui/components/codeblock';
+
+<Callout type='info'>
+	Always validate API input to prevent invalid or malicious data. We recommend{' '}
+	<b>Zod</b> for schema validation.
+</Callout>
+
+<Steps>
+<Step>
+### 1. Install Zod
+
+<CodeBlock title="Terminal" lang="sh">
+```sh
+npm install zod
+```
+</CodeBlock>
+</Step>
+<Step>
+### 2. Validate API input
+
+Example for a POST route:
+
+<CodeBlock title="app/api/user/route.ts" lang="typescript">
+```typescript
+import { NextResponse } from "next/server";
+import { z } from "zod";
+
+const schema = z.object({
+email: z.string().email(),
+});
+
+export async function POST(request: Request) {
+  const { email } = await request.json();
+  const isValid = schema.safeParse({ email });
+
+if (!isValid.success) {
+return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+}
+
+return NextResponse.json({ email: isValid.data.email });
+}
+
+```
+</CodeBlock>
+</Step>
+</Steps>
+
+<Callout type="success">
+  Schema validation is essential for security and reliability. Always validate user input!
+</Callout>
+```
