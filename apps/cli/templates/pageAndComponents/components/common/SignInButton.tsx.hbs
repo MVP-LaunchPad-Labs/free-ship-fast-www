@@ -2,13 +2,13 @@
 
 import * as React from "react";
 {{#if (eq auth "betterAuth")}}
-import { authClient } from "../../lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 {{/if}}
 {{#if (eq auth "supabaseAuth")}}
-import { createClient } from "../../lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 {{/if}}
 import { Button } from "../ui/button";
-import config from "../../config";
+import config from "@/config";
 
 interface SignInButtonProps {
 	extraStyle?: string;

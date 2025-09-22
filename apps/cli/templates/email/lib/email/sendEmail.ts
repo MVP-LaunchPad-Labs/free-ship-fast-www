@@ -2,7 +2,7 @@ import { MagicLinkLogin } from "./templates/MagicLink";
 import { PaymentSuccessEmail, PaymentProcessingEmail, PaymentFailedEmail, PaymentRefundedEmail } from "./templates/payment";
 
 import resend from ".";
-import { rateLimit } from "../redis/ratelimit";
+import { rateLimit } from "@/lib/redis/ratelimit";
 
 export async function sendMagicLinkEmail(
 	email: string,

@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 {{#if (eq database "supabase")}}
 import { createClient } from '@/lib/supabase/server';
-{{else if (eq database "prisma")}}
+{{else if (eq database "postgres")}}
 import { auth } from '@/lib/auth';
-import { PrismaClient } from '@/prisma/generated/prisma';
-{{else if (eq database "mongoose")}}
+import { prisma } from '@/prisma';
+{{else if (eq database "mongodb")}}
 import { auth } from '@/lib/auth';
-import mongoose from 'mongoose';
+import mongodb from 'mongodb';
 import { User } from '@/lib/db/models/User';
 {{else}}
 import { auth } from '@/lib/auth';
@@ -65,32 +65,30 @@ const getUserFromDatabase = async (userId: string): Promise<User | null> => {
 
 	return profile;
 };
-{{else if (eq database "prisma")}}
-const prisma = new PrismaClient();
+{{else if (eq database "postgres")}}
 
 // Auth handler for Better Auth
 const getAuthSession = async (req: NextRequest) => {
 	return await auth.api.getSession({ headers: req.headers });
 };
 
-// Database handler for Prisma
+// Database handler for PostgreSQL
 const getUserFromDatabase = async (userId: string): Promise<User | null> => {
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: { id: true, email: true },
 	});
-	await prisma.$disconnect();
 	return user;
 };
-{{else if (eq database "mongoose")}}
+{{else if (eq database "mongodb")}}
 const getAuthSession = async (req: NextRequest) => {
 	return await auth.api.getSession({ headers: req.headers });
 };
 
 const getUserFromDatabase = async (userId: string): Promise<User | null> => {
 	try {
-		if (mongoose.connection.readyState !== 1) {
-			await mongoose.connect(process.env.MONGODB_URI as string);
+		if (mongodb.connection.readyState !== 1) {
+			await mongodb.connect(process.env.MONGODB_URI as string);
 		}
 
 		const user = await User.findById(userId).select('_id email').lean();
@@ -133,9 +131,9 @@ const getUserFromDatabase = async (userId: string): Promise<User | null> => {
  * Create LemonSqueezy checkout session
 {{#if (eq database "supabase")}}
  * Uses Supabase for authentication and database
-{{else if (eq database "prisma")}}
- * Uses Prisma database and Better Auth
-{{else if (eq database "mongoose")}}
+{{else if (eq database "postgres")}}
+ * Uses PostgreSQL database and Better Auth
+{{else if (eq database "mongodb")}}
  * Uses Mongoose ODM and Better Auth
 {{else}}
  * Uses MongoDB driver and Better Auth

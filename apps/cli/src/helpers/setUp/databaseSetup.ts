@@ -3,6 +3,7 @@ import { spinner } from "@clack/prompts";
 import consola from "consola";
 import fs from "fs-extra";
 import pc from "picocolors";
+import { $ } from "execa";
 import type { ProjectConfig } from "../../types";
 import { addPackageDependency } from "../../utils/addPackageDeps";
 import { setupDbTemplates } from "../projectGeneration/templateManager";
@@ -32,6 +33,8 @@ export async function setupDatabase(config: ProjectConfig) {
 			}
 			
 			await fs.writeJson(pkgJsonPath, pkgJson, { spaces: 2 });
+
+		
 		} else if (database === "supabase") {
 			await addPackageDependency({
 				dependencies: ["@supabase/ssr"],
@@ -46,7 +49,7 @@ export async function setupDatabase(config: ProjectConfig) {
 			});
 		}
 		await setupDbTemplates(projectDir, config);
-		
+	
 	} catch (error) {
 		s.stop(pc.red("Failed to set up database"));
 		if (error instanceof Error) {

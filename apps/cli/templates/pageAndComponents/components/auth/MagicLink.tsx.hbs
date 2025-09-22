@@ -11,10 +11,10 @@ import { Card, CardContent } from '../ui/card';
 import { toast } from 'sonner';
 import { Mail, RefreshCw } from 'lucide-react';
 {{#if (eq auth "betterAuth")}}
-import { authClient } from '../../lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 {{/if}}
 {{#if (eq auth "supabaseAuth")}}
-import { createClient } from '../../lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 {{/if}}
 
 const emailSchema = z.object({

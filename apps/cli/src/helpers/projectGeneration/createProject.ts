@@ -11,6 +11,7 @@ import { installDependencies } from "./installDependencies";
 import { initializeGit } from "./git";
 import { displayPostInstallInstructions } from "./postInstallation";
 import { setupPageAndComponentsTemplate } from "./templateManager";
+import { generateClient } from "../setUp/generateClient";
 
 export async function createProject(options: ProjectConfig) {
 	const projectDir = options.projectDir;
@@ -48,7 +49,7 @@ export async function createProject(options: ProjectConfig) {
 		}
 
 		await initializeGit(projectDir, options.git);
-
+		await generateClient(options);
 		await displayPostInstallInstructions({
 			...options,
 			depsInstalled: options.install,

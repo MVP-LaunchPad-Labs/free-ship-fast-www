@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Feature {
 	title: string;

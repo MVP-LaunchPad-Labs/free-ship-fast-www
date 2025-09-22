@@ -9,8 +9,8 @@ import { Menu, X } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import logo from "../../app/icon.svg";
-import config from "../../config";
+import logo from "@/app/icon.svg";
+import config from "@/config";
 import SignInButton from "./SignInButton";
 import ThemeSwitch from "./ThemeSwitch";
 
@@ -80,7 +80,7 @@ const Header = () => {
 							<Image
 								src={logo}
 								alt={`${config.appName} logo`}
-								className="size-8"
+								className="size-8 dark:invert"
 								priority={true}
 								width={32}
 								height={32}

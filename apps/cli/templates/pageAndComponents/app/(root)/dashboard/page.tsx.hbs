@@ -1,8 +1,8 @@
 {{#if (eq auth 'betterAuth')}}
-	import { getSession } from "../../../lib/auth-server";
+	import { getSession } from "@/lib/auth-utils";
 {{/if}}
 {{#if (eq auth 'supabaseAuth')}}
-	import { createClient } from "../../../lib/supabase/server";
+	import { createClient } from "@/lib/supabase/server";
 {{/if}}
 import { redirect } from "next/navigation"; export default async function
 DashboardPage() {

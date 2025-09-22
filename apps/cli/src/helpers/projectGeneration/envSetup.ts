@@ -195,7 +195,7 @@ export async function setupEnvironmentVariables(config: ProjectConfig) {
 		},
 		// Stripe
 		{
-			key: "STRIPE_PUBLISHABLE_KEY",
+			key: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
 			value: "pk_test_xxx",
 			condition: payment === "stripe",
 		},

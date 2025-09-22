@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { StaticImageData } from "next/image";
 
-import config from "../../config";
+import config from "@/config";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 

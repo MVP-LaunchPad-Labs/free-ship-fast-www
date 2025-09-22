@@ -1,14 +1,14 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 {{#if (eq database "postgres")}}
-import { prisma } from "../../../lib/db/prisma/client";
+import { prisma } from '@/prisma';
 {{/if}}
 {{#if (eq database "mongodb")}}
-import { connectDB } from "../../../lib/db/mongodb/connection";
-import { Waitlist } from "../../../lib/db/mongodb/models/Waitlist";
+import { connectDB } from "@/lib/db/mongodb/connection";
+import { Waitlist } from "@/lib/db/mongodb/models/Waitlist";
 {{/if}}
 {{#if (eq database "supabase")}}
-import { createClient } from "../../../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 {{/if}}
 
 // Database abstraction layer

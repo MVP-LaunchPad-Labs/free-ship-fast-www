@@ -1,4 +1,4 @@
-import config from "../config";
+import config from "@/config";
 
 {{#if (eq database 'postgres')}}
 /**
@@ -66,7 +66,7 @@ export function getPaymentConfig() {
 	}
 	{{/if}}
 	{{#if (eq payment 'lemonsqueezy')}}
-	if (config.payment.lemonsqueezy?.apiKey) {
+	if (config.payment.lemonsqueezy) {
 		return {
 			provider: "lemonsqueezy" as const,
 			config: config.payment.lemonsqueezy,

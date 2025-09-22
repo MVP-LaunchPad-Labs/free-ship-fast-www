@@ -3,9 +3,9 @@ import { nextCookies } from "better-auth/next-js";
 
 {{#if (eq database 'mongodb')}}
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { client } from "../db";
+import { client } from "@/lib/db";
 {{else}}
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/prisma";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 {{/if}}
 
@@ -15,7 +15,7 @@ import { sendMagicLinkEmail } from "./email/sendEmail";
 {{/if}}
 
 {{#unless (eq database 'mongodb')}}
-const prisma = new PrismaClient();
+// Using imported prisma instance
 {{/unless}}
 
 const plugins = [
@@ -41,7 +41,7 @@ export const auth = betterAuth({
 		{{/if}}
 	}),
 	{{/if}}
-	trustedOrigins: [process.env.CORS_ORIGIN || ""],
+	
 	emailAndPassword: {
 		enabled: true
 	},

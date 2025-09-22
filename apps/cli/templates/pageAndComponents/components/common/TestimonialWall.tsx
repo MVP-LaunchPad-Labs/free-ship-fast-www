@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 
-import config from "../../config";
+import config from "@/config";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
