@@ -17,6 +17,7 @@ export default function Navbar() {
 			href: 'https://github.com/MVP-LaunchPad-Labs/free-ship-fast',
 			label: 'Templates',
 		},
+		{ href: '/builder', label: 'Builder' },
 		{ href: '/blog', label: 'Blog' },
 		{ href: '/showcase', label: 'Showcase' },
 		{ href: '/sponsors', label: 'Sponsors' },
@@ -41,7 +42,7 @@ export default function Navbar() {
 
 					{/* Desktop Navigation */}
 					<ul className='hidden lg:flex flex-row items-center gap-2 px-6'>
-						{navigationItems.slice(0, 2).map((item) => (
+						{navigationItems.slice(0, 3).map((item) => (
 							<li key={item.href}>
 								<Button
 									variant='ghost'

@@ -6,7 +6,7 @@ import CTA from "@/components/home/cta"
 type Props = {}
 const page = (props: Props) => {
 	return (
-		<>
+	<main className=' mt-24 mb-12 max-w-6xl  mx-auto border border-border'>
 			<HeroSection />
 			<div className='h-8 bg-dashed'></div>
 			<Features />
@@ -16,7 +16,7 @@ const page = (props: Props) => {
 			<FAQs />
 			<div className='h-8 bg-dashed'></div>
 			<CTA />
-		</>
+		</main>
 
 	);
 }

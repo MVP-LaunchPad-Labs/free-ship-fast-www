@@ -3,7 +3,7 @@ import XIcon from '@/components/icons/x';
 
 export default function Footer() {
 	return (
-		<footer className='border-t border-border border-dotted'>
+		<footer className='border-t border-border border-dotted z-50 bg-background'>
 			<div className='max-w-6xl mx-auto px-6 py-6'>
 				<div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
 					<p className='text-sm text-muted-foreground'>
