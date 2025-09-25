@@ -1,0 +1,127 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+	LayoutDashboard,
+	Settings,
+	CreditCard,
+	BarChart3,
+	Lock,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@/components/ui/sidebar";
+
+const navigation = [
+	{
+		name: "Dashboard",
+		href: "/dashboard",
+		icon: LayoutDashboard,
+		show: true,
+	},
+	{{#if (eq analytics "none")}}
+	{
+		name: "Analytics",
+		href: "/dashboard/analytics",
+		icon: BarChart3,
+		show: false,
+		disabled: true,
+	},
+	{{/if}}
+	{{#unless (eq analytics "none")}}
+	{
+		name: "Analytics",
+		href: "/dashboard/analytics",
+		icon: BarChart3,
+		show: true,
+	},
+	{{/unless}}
+	{{#if (eq payment "none")}}
+	{
+		name: "Billing",
+		href: "/dashboard/billing",
+		icon: CreditCard,
+		show: false,
+		disabled: true,
+	},
+	{{/if}}
+	{{#unless (eq payment "none")}}
+	{
+		name: "Billing",
+		href: "/dashboard/billing",
+		icon: CreditCard,
+		show: true,
+	},
+	{{/unless}}
+	{
+		name: "Settings",
+		href: "/dashboard/settings",
+		icon: Settings,
+		show: true,
+	},
+	{{#if (eq auth "none")}}
+	{
+		name: "Authentication",
+		href: "/dashboard/auth",
+		icon: Lock,
+		show: false,
+		disabled: true,
+	},
+	{{/if}}
+	{{#unless (eq auth "none")}}
+	{
+		name: "Authentication",
+		href: "/dashboard/auth",
+		icon: Lock,
+		show: true,
+	},
+	{{/unless}}
+];
+
+export default function AppSidebar() {
+	const pathname = usePathname();
+
+	return (
+		<Sidebar>
+			<SidebarContent>
+				<SidebarGroup>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{navigation.map((item) => {
+								const isActive = pathname === item.href;
+								const Icon = item.icon;
+								
+								return (
+									<SidebarMenuItem key={item.name}>
+										<SidebarMenuButton 
+											asChild 
+											isActive={isActive}
+											disabled={item.disabled}
+										>
+											<Link href={item.disabled ? "#" : item.href}>
+												<Icon className="h-4 w-4" />
+												<span>{item.name}</span>
+												{item.disabled && (
+													<span className="ml-auto text-xs opacity-50">(N/A)</span>
+												)}
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								);
+							})}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarContent>
+		</Sidebar>
+	);
+}

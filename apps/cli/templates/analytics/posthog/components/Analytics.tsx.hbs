@@ -1,0 +1,52 @@
+"use client";
+
+import { useEffect } from "react";
+import posthog from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
+
+interface PostHogAnalyticsProps {
+	children: React.ReactNode;
+}
+
+export default function PostHogAnalytics({ children }: PostHogAnalyticsProps) {
+	useEffect(() => {
+		const apiKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+		const apiHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://app.posthog.com";
+
+		if (apiKey && typeof window !== "undefined") {
+			posthog.init(apiKey, {
+				api_host: apiHost,
+				loaded: (posthog) => {
+					if (process.env.NODE_ENV === "development") {
+						console.log("PostHog loaded");
+					}
+				},
+				// Disable in development
+				disable_session_recording: process.env.NODE_ENV === "development",
+				capture_pageview: true,
+				capture_pageleave: true,
+			});
+		}
+	}, []);
+
+	if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+		return <>{children}</>;
+	}
+
+	return (
+		<PostHogProvider client={posthog}>
+			{children}
+		</PostHogProvider>
+	);
+}
+
+// PostHog Page View Tracker
+export function PostHogPageView() {
+	useEffect(() => {
+		if (typeof window !== "undefined" && posthog) {
+			posthog.capture("$pageview");
+		}
+	}, []);
+
+	return null;
+}

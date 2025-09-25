@@ -1,0 +1,168 @@
+﻿import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+{{#if (eq database "postgres")}}
+import { prisma } from '@/prisma';
+{{/if}}
+{{#if (eq database "mongodb")}}
+import { connectDB } from "@/lib/db/mongodb/connection";
+import { Waitlist } from "@/lib/db/mongodb/models/Waitlist";
+{{/if}}
+{{#if (eq database "supabase")}}
+import { createClient } from "@/lib/supabase/server";
+{{/if}}
+
+// Database abstraction layer
+interface WaitlistDatabase {
+	findWaitlistByEmail(email: string): Promise<{ email: string } | null>;
+	createWaitlist(data: {
+		email: string;
+		createdAt: Date;
+		ip: string;
+		userAgent: string;
+	}): Promise<void>;
+}
+
+{{#if (eq database "postgres")}}
+// Prisma implementation for PostgreSQL
+const prismaDb: WaitlistDatabase = {
+	async findWaitlistByEmail(email: string) {
+		const waitlist = await prisma.waitlist.findUnique({
+			where: { email },
+			select: { email: true },
+		});
+		return waitlist;
+	},
+	async createWaitlist(data) {
+		await prisma.waitlist.create({
+			data,
+		});
+	},
+};
+
+const db = prismaDb;
+{{/if}}
+
+{{#if (eq database "mongodb")}}
+// Mongoose implementation for MongoDB
+const mongoDb: WaitlistDatabase = {
+	async findWaitlistByEmail(email: string) {
+		await connectDB();
+		const waitlist = await Waitlist.findOne({ email }).select("email").lean();
+		return waitlist;
+	},
+	async createWaitlist(data) {
+		await connectDB();
+		const waitlist = new Waitlist(data);
+		await waitlist.save();
+	},
+};
+
+const db = mongoDb;
+{{/if}}
+
+{{#if (eq database "supabase")}}
+// Supabase implementation
+const supabaseDb: WaitlistDatabase = {
+	async findWaitlistByEmail(email: string) {
+		const supabase = createClient();
+		const { data, error } = await supabase
+			.from("waitlist")
+			.select("email")
+			.eq("email", email)
+			.single();
+		
+		if (error && error.code !== "PGRST116") { 
+			// PGRST116 = no rows returned
+			throw error;
+		}
+		
+		return data;
+	},
+	async createWaitlist(data) {
+		const supabase = createClient();
+		const { error } = await supabase
+			.from("waitlist")
+			.insert([{
+				email: data.email,
+				created_at: data.createdAt.toISOString(),
+				ip_address: data.ip,
+				user_agent: data.userAgent,
+			}]);
+		
+		if (error) {
+			throw error;
+		}
+	},
+};
+
+const db = supabaseDb;
+{{/if}}
+
+// This route is used to store the waitlist that are generated from the landing page.
+export async function POST(req: NextRequest) {
+	try {
+		const body = await req.json();
+
+		if (!body.email) {
+			return NextResponse.json({ error: "Email is required" }, { status: 400 });
+		}
+
+		// Basic email validation
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(body.email)) {
+			return NextResponse.json(
+				{ error: "Invalid email format" },
+				{ status: 400 }
+			);
+		}
+
+		{{#if (or (eq database "postgres") (eq database "supabase") (eq database "mongodb"))}}
+		// Check for duplicate email to prevent spam
+		const existingWaitlist = await db.findWaitlistByEmail(body.email);
+		if (existingWaitlist) {
+			return NextResponse.json(
+				{ error: "Email already registered" },
+				{ status: 409 }
+			);
+		}
+		{{/if}}
+
+		// Get IP and user agent for spam prevention
+		const headersList = await headers();
+		const ip =
+			headersList.get("x-forwarded-for") ||
+			headersList.get("x-real-ip") ||
+			"unknown";
+		const userAgent = headersList.get("user-agent") || "unknown";
+
+		{{#if (or (eq database "postgres") (eq database "supabase") (eq database "mongodb"))}}
+		// Insert with timestamp and spam prevention data
+		await db.createWaitlist({
+			email: body.email,
+			createdAt: new Date(),
+			ip,
+			userAgent,
+		});
+		{{/if}}
+
+		{{#unless (or (eq database "postgres") (eq database "supabase") (eq database "mongodb"))}}
+		// No database configured - just log the email
+		console.log("Waitlist signup (no database):", {
+			email: body.email,
+			ip,
+			userAgent,
+			timestamp: new Date().toISOString()
+		});
+		{{/unless}}
+
+		return NextResponse.json({ success: true });
+	} catch (error) {
+		console.error("Waitlist submission error:", error);
+		return NextResponse.json(
+			{
+				error: (error as Error)?.message || "Internal server error",
+			},
+			{ status: 500 }
+		);
+	}
+}

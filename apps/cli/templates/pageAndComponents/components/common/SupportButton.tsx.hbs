@@ -1,0 +1,60 @@
+{{#if email}}
+"use client";
+
+import * as React from "react";
+import { MessageCircle } from "lucide-react";
+
+import { Button } from "../ui/button";
+import config from "@/config";
+
+interface SupportButtonProps {
+	variant?: "default" | "outline" | "ghost";
+	size?: "default" | "sm" | "lg" | "icon";
+	className?: string;
+}
+
+/**
+ * Support button component with shadcn/ui styling
+ */
+const SupportButton = ({
+	variant = "outline",
+	size = "sm",
+	className,
+}: SupportButtonProps = {}) => {
+	const handleClick = () => {
+		try {
+			// Try to access Crisp if it's available globally
+			if (typeof window !== "undefined" && (window as any).$crisp) {
+				(window as any).$crisp.push(["do", "chat:show"]);
+				(window as any).$crisp.push(["do", "chat:open"]);
+			} else {
+				// Open default email client with support subject
+				window.open(
+					`mailto:support@yourdomain.com?subject=Need help with ${config.appName}`,
+					"_blank",
+				);
+			}
+		} catch (error) {
+			console.error("Support button error:", error);
+			// Fallback to email if Crisp fails
+			window.open("mailto:support@yourdomain.com?subject=Need help", "_blank");
+		}
+	};
+
+	return (
+		<Button
+			variant={variant}
+			size={size}
+			onClick={handleClick}
+			className={`gap-2 ${className || ""}`}
+			title="Chat with support"
+			data-slot="support-button"
+		>
+			<MessageCircle className="size-4" />
+			Support
+		</Button>
+	);
+};
+
+export default SupportButton;
+{{/if}} 

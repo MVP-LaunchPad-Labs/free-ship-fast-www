@@ -1,0 +1,15 @@
+import { createAuthClient } from "better-auth/react";
+{{#if email}}
+import { magicLinkClient } from "better-auth/client/plugins";
+{{/if}}
+
+export const authClient = createAuthClient({
+	baseURL: process.env.BETTER_AUTH_URL,
+	{{#if email}}
+	plugins: [
+		magicLinkClient()
+	]
+	{{else}}
+	plugins: []
+	{{/if}}
+});

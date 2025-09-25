@@ -1,0 +1,101 @@
+{{#if (eq auth 'betterAuth')}}
+	import { getSession } from "@/lib/auth-utils";
+{{/if}}
+{{#if (eq auth 'supabaseAuth')}}
+	import { createClient } from "@/lib/supabase/server";
+{{/if}}
+import { redirect } from "next/navigation"; export default async function
+DashboardPage() {
+{{#if (eq auth 'betterAuth')}}
+	const session = await getSession(); if (!session) { redirect("/sign-in"); }
+{{/if}}
+
+{{#if (eq auth 'supabaseAuth')}}
+	const supabase = createClient(); const { data: { session } } = await
+	supabase.auth.getSession(); if (!session) { redirect("/sign-in"); }
+{{/if}}
+
+{{#if (eq auth 'none')}}
+	// No authentication - show public dashboard
+{{/if}}
+
+return (
+<div className='container mx-auto px-4 py-8'>
+	<div className='max-w-4xl mx-auto'>
+		<div className='mb-8'>
+			<h1 className='text-3xl font-bold text-foreground'>
+				{{#if (eq auth 'none')}}
+					Public Dashboard
+				{{/if}}
+				{{#unless (eq auth 'none')}}
+					Welcome to your Dashboard
+				{{/unless}}
+			</h1>
+			{{#if (eq auth 'none')}}
+				<p className='text-muted-foreground mt-2'>
+					⚠️ This is a public dashboard. Authentication is not configured.
+				</p>
+			{{/if}}
+			{{#unless (eq auth 'none')}}
+				<p className='text-muted-foreground mt-2'>
+					Manage your account and settings from here.
+				</p>
+			{{/unless}}
+		</div>
+
+		<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+			{/* Stats Cards */}
+			<div className='bg-card text-card-foreground rounded-lg border p-6'>
+				<h3 className='text-lg font-semibold mb-2'>Overview</h3>
+				<p className='text-sm text-muted-foreground'>
+					Dashboard overview stats would go here.
+				</p>
+			</div>
+
+			<div className='bg-card text-card-foreground rounded-lg border p-6'>
+				<h3 className='text-lg font-semibold mb-2'>Analytics</h3>
+				<p className='text-sm text-muted-foreground'>
+					{{#unless (eq analytics 'none')}}
+						View your analytics data here.
+					{{/unless}}
+					{{#if (eq analytics 'none')}}
+						Analytics not configured.
+					{{/if}}
+				</p>
+			</div>
+
+			{{#unless (eq payment 'none')}}
+				<div className='bg-card text-card-foreground rounded-lg border p-6'>
+					<h3 className='text-lg font-semibold mb-2'>Billing</h3>
+					<p className='text-sm text-muted-foreground'>
+						Manage your subscription and billing.
+					</p>
+				</div>
+			{{/unless}}
+
+			{{#if (eq payment 'none')}}
+				<div
+					className='bg-card text-card-foreground rounded-lg border p-6 opacity-50'
+				>
+					<h3 className='text-lg font-semibold mb-2'>Billing</h3>
+					<p className='text-sm text-muted-foreground'>
+						Payment system not configured.
+					</p>
+				</div>
+			{{/if}}
+		</div>
+
+		{{#if (eq auth 'none')}}
+			<div
+				className='mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg'
+			>
+				<h3 className='font-semibold text-yellow-800 mb-2'>Development Mode</h3>
+				<p className='text-sm text-yellow-700'>
+					This dashboard is publicly accessible. To add authentication,
+					configure your auth provider in the project settings.
+				</p>
+			</div>
+		{{/if}}
+	</div>
+</div>
+); }

@@ -1,0 +1,80 @@
+import { usePostHog } from "posthog-js/react";
+import { useEffect } from "react";
+
+// Hook for easy PostHog usage in components
+export function useAnalytics() {
+	const posthog = usePostHog();
+
+	const track = (eventName: string, properties?: Record<string, any>) => {
+		if (posthog) {
+			posthog.capture(eventName, properties);
+		}
+	};
+
+	const identify = (userId: string, properties?: Record<string, any>) => {
+		if (posthog) {
+			posthog.identify(userId, properties);
+		}
+	};
+
+	const reset = () => {
+		if (posthog) {
+			posthog.reset();
+		}
+	};
+
+	const isFeatureEnabled = (flagKey: string): boolean => {
+		if (!posthog) return false;
+		return posthog.isFeatureEnabled(flagKey);
+	};
+
+	const getFeatureFlag = (flagKey: string) => {
+		if (!posthog) return undefined;
+		return posthog.getFeatureFlag(flagKey);
+	};
+
+	return {
+		track,
+		identify,
+		reset,
+		isFeatureEnabled,
+		getFeatureFlag,
+		posthog,
+	};
+}
+
+// Hook for tracking page views on route changes
+export function usePageTracking() {
+	const { track } = useAnalytics();
+
+	useEffect(() => {
+		track("$pageview");
+	}, [track]);
+}
+
+// Hook for feature flags
+export function useFeatureFlag(flagKey: string, defaultValue?: any) {
+	const { getFeatureFlag, isFeatureEnabled } = useAnalytics();
+
+	const flagValue = getFeatureFlag(flagKey);
+	const isEnabled = isFeatureEnabled(flagKey);
+
+	return {
+		value: flagValue !== undefined ? flagValue : defaultValue,
+		isEnabled,
+		isLoading: flagValue === undefined,
+	};
+}
+
+// Hook for A/B testing
+export function useABTest(testName: string, variants: string[], defaultVariant?: string) {
+	const { getFeatureFlag } = useAnalytics();
+
+	const variant = getFeatureFlag(testName);
+	const activeVariant = variants.includes(variant) ? variant : (defaultVariant || variants[0]);
+
+	return {
+		variant: activeVariant,
+		isVariant: (variantName: string) => activeVariant === variantName,
+	};
+}

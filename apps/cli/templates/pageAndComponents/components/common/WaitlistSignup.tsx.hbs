@@ -1,0 +1,128 @@
+
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { toast } from "sonner";
+import { Mail, CheckCircle } from "lucide-react";
+
+const emailSchema = z.object({
+	email: z.string().email("Please enter a valid email address"),
+});
+
+type EmailForm = z.infer<typeof emailSchema>;
+
+interface WaitlistSignupProps {
+	title?: string;
+	description?: string;
+	className?: string;
+}
+
+export default function WaitlistSignup({
+	title = "Join our waitlist",
+	description = "Be the first to know when we launch",
+	className,
+}: WaitlistSignupProps) {
+	const [isLoading, setIsLoading] = useState(false);
+	const [isSuccess, setIsSuccess] = useState(false);
+
+	const form = useForm<EmailForm>({
+		resolver: zodResolver(emailSchema),
+		defaultValues: { email: "" },
+	});
+
+	const onSubmit = async (data: EmailForm) => {
+		setIsLoading(true);
+		try {
+			const response = await fetch("/api/waitlist", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email: data.email }),
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error || "Failed to join waitlist");
+			}
+
+			setIsSuccess(true);
+			toast.success("You've been added to our waitlist!");
+		} catch (error) {
+			console.error("Waitlist signup error:", error);
+			toast.error(
+				error instanceof Error ? error.message : "Failed to join waitlist"
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	if (isSuccess) {
+		return (
+			<Card className={`w-full max-w-md mx-auto ${className || ""}`}>
+				<CardContent className="p-6 text-center">
+					<div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+						<CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+					</div>
+					<h3 className="font-semibold text-lg mb-2">You're on the list!</h3>
+					<p className="text-muted-foreground text-sm">
+						We'll notify you as soon as we launch.
+					</p>
+				</CardContent>
+			</Card>
+		);
+	}
+
+	return (
+		<Card className={`w-full max-w-md mx-auto ${className || ""}`}>
+			<CardHeader className="text-center">
+				<CardTitle className="text-xl">{title}</CardTitle>
+				<p className="text-sm text-muted-foreground">{description}</p>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<div className="space-y-2">
+						<Label htmlFor="email">Email address</Label>
+						<Input
+							id="email"
+							type="email"
+							placeholder="Enter your email"
+							{...form.register("email")}
+							className={
+								form.formState.errors.email
+									? "border-red-500 focus:border-red-500"
+									: ""
+							}
+						/>
+						{form.formState.errors.email && (
+							<p className="text-sm text-red-500">
+								{form.formState.errors.email.message}
+							</p>
+						)}
+					</div>
+					<Button type="submit" className="w-full" disabled={isLoading}>
+						{isLoading ? (
+							<>
+								<Mail className="w-4 h-4 mr-2 animate-pulse" />
+								Joining...
+							</>
+						) : (
+							<>
+								<Mail className="w-4 h-4 mr-2" />
+								Join Waitlist
+							</>
+						)}
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
+	);
+}

@@ -1,0 +1,57 @@
+import { betterAuth } from "better-auth";
+import { nextCookies } from "better-auth/next-js";
+
+{{#if (eq database 'mongodb')}}
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { client } from "@/lib/db";
+{{else}}
+import { prisma } from "@/prisma";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+{{/if}}
+
+{{#if email}}
+import { magicLink } from "better-auth/plugins";
+import { sendMagicLinkEmail } from "./email/sendEmail";
+{{/if}}
+
+{{#unless (eq database 'mongodb')}}
+// Using imported prisma instance
+{{/unless}}
+
+const plugins = [
+	{{#unless (eq database 'mongodb')}}
+	nextCookies(),
+	{{/unless}}
+	{{#if email}}
+	magicLink({
+		sendMagicLink: async ({ email, token, url }) => {
+			await sendMagicLinkEmail(email, url, { email });
+		},
+	}),
+	{{/if}}
+].filter(Boolean);
+
+export const auth = betterAuth({
+	{{#if (eq database 'mongodb')}}
+	database: mongodbAdapter(client),
+	{{else}}
+	database: prismaAdapter(prisma, {
+		{{#if (eq database 'postgres')}}
+		provider: "postgresql"
+		{{/if}}
+	}),
+	{{/if}}
+	
+	emailAndPassword: {
+		enabled: true
+	},
+	{{#unless (eq database 'mongodb')}}
+	socialProviders: {
+		google: {
+			clientId: process.env.GOOGLE_CLIENT_ID!,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+		},
+	},
+	{{/unless}}
+	plugins,
+});
